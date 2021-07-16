@@ -11,15 +11,11 @@ import com.github.terrakok.cicerone.Router
 import dagger.Component
 import javax.inject.Singleton
 
-@Singleton
 @Component(modules = [PresenterModule::class])
 interface PresenterComponent {
     fun inject(target: MainActivity)
     fun inject(target: ListNotesView)
     fun inject(target: NoteEditView)
-
-    fun getListNotesView(): ListNotesView
-    fun getNoteEditView(): NoteEditView
 
     fun getListNotesVM(): RecyclerViewModel
     fun getNoteEditVM(): NoteViewModel

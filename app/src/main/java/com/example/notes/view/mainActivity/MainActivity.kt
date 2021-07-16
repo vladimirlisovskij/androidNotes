@@ -7,6 +7,7 @@ import com.example.notes.application.MainApplication
 import com.example.notes.presenter.mainActivity.MainViewModel
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.petarmarijanovic.rxactivityresult.RxActivityResult
 import javax.inject.Inject
 
 class MainActivity

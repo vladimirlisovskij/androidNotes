@@ -7,30 +7,29 @@ import com.example.notes.application.MainApplication
 import com.example.notes.base.BaseView
 import com.example.notes.databinding.FragNoteEditBinding
 import com.example.notes.presenter.noteEdit.NoteViewModel
+import com.example.notes.presenter.recycler.RecyclerViewModel
 import com.example.notes.view.entities.NoteRecyclerHolder
 import javax.inject.Inject
 
 private const val ARG_HOLDER = "ARG_HOLDER"
 
-class NoteEditView @Inject constructor(
-    override val viewModel: NoteViewModel
-): BaseView<NoteViewModel>(R.layout.frag_note_edit) {
+class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     companion object {
-        fun newInstance(noteRecyclerHolder: NoteRecyclerHolder) = MainApplication
-            .instance
-            .presenterComponent
-            .getNoteEditView().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_HOLDER, noteRecyclerHolder)
-                }
+        fun newInstance(noteRecyclerHolder: NoteRecyclerHolder) = NoteEditView().apply {
+            arguments = Bundle().apply {
+                putParcelable(ARG_HOLDER, noteRecyclerHolder)
+            }
         }
     }
+
+    @Inject override lateinit var viewModel: NoteViewModel
 
     private var holder: NoteRecyclerHolder? = null
     private var noteID: Int = 0
     private lateinit var binding: FragNoteEditBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        MainApplication.instance.presenterComponent.inject(this)
         super.onCreate(savedInstanceState)
         arguments?.let {
             holder = it.getParcelable(ARG_HOLDER)

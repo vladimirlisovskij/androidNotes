@@ -12,16 +12,21 @@ import com.example.notes.presenter.recycler.RecyclerViewModel
 import javax.inject.Inject
 
 
-class ListNotesView @Inject constructor(
-    override val viewModel: RecyclerViewModel
-): BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
+class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
     companion object {
-        fun newInstance() = MainApplication.instance.presenterComponent.getListNotesView()
+        fun newInstance() = ListNotesView()
     }
+
+    @Inject override lateinit var viewModel: RecyclerViewModel
 
     private val adapter = NoteRecyclerAdapter()
 
     private lateinit var binding: FragRecyclerBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        MainApplication.instance.presenterComponent.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
