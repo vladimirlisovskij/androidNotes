@@ -3,12 +3,11 @@ package com.example.notes.view.noteEdit
 import android.os.Bundle
 import android.view.View
 import com.example.notes.R
-import com.example.notes.application.MainApplication
+import com.example.notes.di.Injector
 import com.example.notes.base.BaseView
 import com.example.notes.databinding.FragNoteEditBinding
+import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.noteEdit.NoteViewModel
-import com.example.notes.presenter.recycler.RecyclerViewModel
-import com.example.notes.view.entities.NoteRecyclerHolder
 import javax.inject.Inject
 
 private const val ARG_HOLDER = "ARG_HOLDER"
@@ -29,7 +28,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     private lateinit var binding: FragNoteEditBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        MainApplication.instance.presenterComponent.inject(this)
+        Injector.component.inject(this)
         super.onCreate(savedInstanceState)
         arguments?.let {
             holder = it.getParcelable(ARG_HOLDER)

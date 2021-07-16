@@ -1,4 +1,4 @@
-package com.example.notes.view.entities
+package com.example.notes.presenter.entities
 
 import android.os.Parcelable
 import com.example.notes.domain.enitites.NoteEntity

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
 import com.example.notes.databinding.ItemRecyclerNoteBinding
-import com.example.notes.view.entities.NoteRecyclerHolder
+import com.example.notes.presenter.entities.NoteRecyclerHolder
 
 class NoteRecyclerAdapter: RecyclerView.Adapter<NoteRecyclerAdapter.NoteViewHolder>() {
     inner class NoteViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {

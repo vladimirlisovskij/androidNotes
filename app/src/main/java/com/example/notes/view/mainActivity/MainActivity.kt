@@ -3,11 +3,10 @@ package com.example.notes.view.mainActivity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.notes.R
-import com.example.notes.application.MainApplication
+import com.example.notes.di.Injector
 import com.example.notes.presenter.mainActivity.MainViewModel
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import com.petarmarijanovic.rxactivityresult.RxActivityResult
 import javax.inject.Inject
 
 class MainActivity
@@ -22,7 +21,7 @@ class MainActivity
     private val navigator = AppNavigator(this, R.id.fragmentContainer)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        MainApplication.instance.presenterComponent.inject(this)
+        Injector.component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

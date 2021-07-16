@@ -5,7 +5,7 @@ import com.example.notes.domain.repository.Repository
 import io.reactivex.rxjava3.core.Completable
 import javax.inject.Inject
 
-class AddNoteUseCase (
+class AddNoteUseCase @Inject constructor(
     private val repository: Repository
 ) {
     operator fun invoke(noteEntity: NoteEntity): Completable {
