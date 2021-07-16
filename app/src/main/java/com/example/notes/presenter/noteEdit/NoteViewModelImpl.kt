@@ -13,13 +13,11 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-class NoteViewModelImpl: NoteViewModel, BaseViewModelImpl()  {
-
-    @Inject lateinit var addNoteUseCase: AddNoteUseCase
-    @Inject lateinit var delNoteUseCase: DelNoteUseCase
-    @Inject lateinit var coordinator: Coordinator
-
-
+class NoteViewModelImpl(
+    private val addNoteUseCase: AddNoteUseCase,
+    private val delNoteUseCase: DelNoteUseCase,
+    private val coordinator: Coordinator
+): NoteViewModel, BaseViewModelImpl()  {
     override fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder) {
         addNoteUseCase(noteRecyclerHolder.toDomain())
             .observeOn(AndroidSchedulers.mainThread())

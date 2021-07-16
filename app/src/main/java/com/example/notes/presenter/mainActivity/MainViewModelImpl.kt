@@ -8,11 +8,9 @@ import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 import javax.inject.Inject
 
-class MainViewModelImpl: MainViewModel, BaseViewModelImpl() {
-
-    @Inject
-    lateinit var coordinator: Coordinator
-
+class MainViewModelImpl(
+    private val coordinator: Coordinator
+): MainViewModel, BaseViewModelImpl() {
     override fun onViewReady() {
         coordinator.openListNote()
     }

@@ -7,9 +7,9 @@ import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 import javax.inject.Inject
 
-class Coordinator{
-    @Inject
-    lateinit var router: Router
+class Coordinator(
+    private val router: Router
+){
 
     fun openListNote() {
         router.newRootScreen(FragmentScreen{ ListNotesView.newInstance()})

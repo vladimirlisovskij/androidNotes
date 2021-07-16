@@ -6,10 +6,9 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
-class Repository {
-
-    @Inject lateinit var dataSource: DataSource
-
+class Repository @Inject constructor(
+    private val dataSource: DataSource
+) {
     fun addNote(noteEntity: NoteEntity): Completable {
         return dataSource.addNote(noteEntity)
     }

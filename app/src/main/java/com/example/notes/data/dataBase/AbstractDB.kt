@@ -1,10 +1,10 @@
-package com.example.notes.dataBase
+package com.example.notes.data.dataBase
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.notes.dataBase.entity.Employee
+import com.example.notes.data.dataBase.entity.Employee
 
 @Database(entities = [Employee::class], version = 1)
 abstract class AbstractDB: RoomDatabase() {

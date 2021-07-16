@@ -3,8 +3,9 @@ package com.example.notes.application
 import android.app.Application
 import com.example.notes.data.di.DaggerDataComponent
 import com.example.notes.data.di.DataComponent
-import com.example.notes.presenter.di.DaggerPresenterComponent
-import com.example.notes.presenter.di.PresenterComponent
+import com.example.notes.domain.di.DaggerUseCaseComponent
+import com.example.notes.domain.di.UseCaseComponent
+import com.example.notes.presenter.di.*
 
 class MainApplication: Application() {
     companion object {
@@ -12,11 +13,15 @@ class MainApplication: Application() {
             private set
     }
 
-    val dataInjector: DataComponent by lazy {
+    val dataComponent: DataComponent by lazy {
         DaggerDataComponent.create()
     }
 
-    val presenterInjector: PresenterComponent by lazy {
+    val useCaseComponent: UseCaseComponent by lazy {
+        DaggerUseCaseComponent.create()
+    }
+
+    val presenterComponent: PresenterComponent by lazy {
         DaggerPresenterComponent.create()
     }
 

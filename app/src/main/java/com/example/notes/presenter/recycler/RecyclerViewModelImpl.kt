@@ -12,15 +12,13 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-class RecyclerViewModelImpl: RecyclerViewModel, BaseViewModelImpl()  {
+class RecyclerViewModelImpl(
+    private val getNotesUseCase: GetNotesUseCase,
+    private val coordinator: Coordinator
+): RecyclerViewModel, BaseViewModelImpl()  {
     override val noteList = MutableLiveData<List<NoteRecyclerHolder>>()
 
-    @Inject lateinit var getNotesUseCase: GetNotesUseCase
-    @Inject lateinit var coordinator: Coordinator
-
     init {
-        MainApplication.instance.presenterInjector.inject(this) // TODO remove it
-
         disposable += getNotesUseCase()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())

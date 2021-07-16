@@ -1,8 +1,8 @@
 package com.example.notes.data.dataSource
 
-import com.example.notes.dataBase.EmployeeDao
-import com.example.notes.dataBase.entity.toData
-import com.example.notes.dataBase.entity.toDomain
+import com.example.notes.data.dataBase.EmployeeDao
+import com.example.notes.data.dataBase.entity.toData
+import com.example.notes.data.dataBase.entity.toDomain
 import com.example.notes.domain.dataSource.DataSource
 import com.example.notes.domain.enitites.NoteEntity
 import io.reactivex.rxjava3.core.Completable
@@ -10,9 +10,9 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 
-class DataSourceImpl: DataSource {
-    @Inject lateinit var employeeDao: EmployeeDao
-
+class DataSourceImpl @Inject constructor(
+    private val employeeDao: EmployeeDao
+) : DataSource {
     override fun addNote(noteEntity: NoteEntity): Completable {
         return employeeDao.insert(noteEntity.toData())
     }
