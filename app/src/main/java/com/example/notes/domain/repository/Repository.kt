@@ -10,7 +10,7 @@ import javax.inject.Inject
 class Repository @Inject constructor(
     private val dataSource: DataSource
 ) {
-    fun addNote(noteEntity: NoteEntity, bitmap: Bitmap): Completable{
+    fun addNote(noteEntity: NoteEntity, bitmap: Bitmap?): Completable{
         return dataSource.deleteImageById(noteEntity.id).andThen(Completable.fromSingle(
             dataSource.saveImage(bitmap).flatMap {
                 dataSource.addNote(noteEntity.replaceImage(it))

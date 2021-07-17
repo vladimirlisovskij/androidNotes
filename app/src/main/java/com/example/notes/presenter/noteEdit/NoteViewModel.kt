@@ -31,10 +31,10 @@ class NoteViewModel @Inject constructor(
     private val mutableImageUri = MutableLiveData<Uri>()
     val imageUri: LiveData<Uri> = mutableImageUri
 
-    private val mutableImageBitmap = MutableLiveData<Bitmap>()
-    val imageBitmap: LiveData<Bitmap> = mutableImageBitmap
+    private val mutableImageBitmap = MutableLiveData<Bitmap?>()
+    val imageBitmap: LiveData<Bitmap?> = mutableImageBitmap
 
-    fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap) {
+    fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap?) {
         disposable += addNoteUseCase(noteRecyclerHolder.toDomain(), newImage)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
@@ -45,7 +45,7 @@ class NoteViewModel @Inject constructor(
                 },
                 {
                     coordinator.openListNote()
-                    Log.d("tag", "error $it.toString()")
+                    Log.d("tag", "error on apply get $it.toString()")
                 }
             )
     }
@@ -61,7 +61,7 @@ class NoteViewModel @Inject constructor(
                 },
                 {
                     coordinator.openListNote()
-                    Log.d("tag", "error $it.toString()")
+                    Log.d("tag", "error on del $it.toString()")
                 }
             )
     }
@@ -87,7 +87,8 @@ class NoteViewModel @Inject constructor(
                     mutableImageBitmap.postValue(bitmap)
                 },
                 {
-                    Log.d("tag", "error $it.toString()")
+                    mutableImageBitmap.postValue(null)
+                    Log.d("tag", "error on load $it.toString()")
                 }
             )
     }

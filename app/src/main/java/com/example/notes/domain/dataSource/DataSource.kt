@@ -12,7 +12,7 @@ interface DataSource {
 
     fun getNotes(): Single<List<NoteEntity>>
 
-    fun saveImage(bitmap: Bitmap): Single<String>
+    fun saveImage(bitmap: Bitmap?): Single<String>
 
     fun loadImage(key: String): Single<Bitmap>
 

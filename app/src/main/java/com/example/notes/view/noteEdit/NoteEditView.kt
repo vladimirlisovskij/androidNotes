@@ -59,7 +59,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                             body = etBody.text.toString(),
                             image = oldKey
                         ),
-                        (image.drawable as? BitmapDrawable)?.bitmap ?: Bitmap.createBitmap(1,1,Bitmap.Config.ARGB_8888)
+                        (image.drawable as? BitmapDrawable)?.bitmap
                     )
                 }
             }

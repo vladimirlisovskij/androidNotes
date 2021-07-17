@@ -50,8 +50,9 @@ class DataSourceImpl @Inject constructor(
         }
     }
 
-    override fun saveImage(bitmap: Bitmap): Single<String> {
+    override fun saveImage(bitmap: Bitmap?): Single<String> {
         return Single.fromCallable {
+            bitmap ?: return@fromCallable ""
             val key = Date().time.toString()
             val fos = FileOutputStream(File(directory, key))
             try {
@@ -65,12 +66,7 @@ class DataSourceImpl @Inject constructor(
 
     override fun loadImage(key: String): Single<Bitmap> {
         return Single.fromCallable {
-            try {
-                return@fromCallable BitmapFactory.decodeStream(FileInputStream(File(directory, key)))
-            } catch (e: Exception) {
-                return@fromCallable Bitmap.createBitmap(1,1,Bitmap.Config.ARGB_8888)
-            }
-
+            BitmapFactory.decodeStream(FileInputStream(File(directory, key)))
         }
     }
 }

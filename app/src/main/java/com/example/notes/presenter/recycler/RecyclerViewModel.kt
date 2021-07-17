@@ -25,19 +25,19 @@ class RecyclerViewModel @Inject constructor(
             .subscribeOn(Schedulers.io())
             .subscribe(
                 { notes ->
-                    Log.d("tag", "get OK")
+                    Log.d("tag", "getNotes OK")
                     mutableNoteList.postValue(notes.map {
                         it.toPresentation()
                     })
                 },
                 {
-                    Log.d("tag", "error $it.toString()")
+                    Log.d("tag", "error on getNotes $it.toString()")
                 }
             )
     }
 
     fun onAddNoteClick() {
-        coordinator.openNoteEditor(NoteRecyclerHolder(0, "", "", "", "123"))
+        coordinator.openNoteEditor(NoteRecyclerHolder(0, "", "", "", ""))
     }
 
     fun onItemClick(noteRecyclerHolder: NoteRecyclerHolder) {

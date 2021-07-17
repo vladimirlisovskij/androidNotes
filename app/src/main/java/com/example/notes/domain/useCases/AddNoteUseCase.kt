@@ -9,7 +9,7 @@ import javax.inject.Inject
 class AddNoteUseCase @Inject constructor(
     private val repository: Repository
 ) {
-    operator fun invoke(noteEntity: NoteEntity, bitmap: Bitmap): Completable {
+    operator fun invoke(noteEntity: NoteEntity, bitmap: Bitmap?): Completable {
         return repository.addNote(noteEntity, bitmap)
     }
 }
