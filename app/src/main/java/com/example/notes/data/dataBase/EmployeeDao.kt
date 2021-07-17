@@ -16,7 +16,7 @@ interface EmployeeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(note: Employee): Single<Long>
 
-    @Query("deleteNote from employee where id=:id")
+    @Query("delete from employee where id=:id")
     fun deleteById(id: Int): Completable
 
     @Query("select * from employee where id=:id")
