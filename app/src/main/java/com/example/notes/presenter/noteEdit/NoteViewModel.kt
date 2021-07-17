@@ -2,6 +2,7 @@ package com.example.notes.presenter.noteEdit
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResult
@@ -10,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.notes.base.BaseViewModel
 import com.example.notes.domain.useCases.AddNoteUseCase
 import com.example.notes.domain.useCases.DelNoteUseCase
+import com.example.notes.domain.useCases.LoadImageUseCase
 import com.example.notes.presenter.coordinator.Coordinator
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.entities.toDomain
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class NoteViewModel @Inject constructor(
     private val addNoteUseCase: AddNoteUseCase,
     private val delNoteUseCase: DelNoteUseCase,
+    private val fileUseCase: LoadImageUseCase,
     private val coordinator: Coordinator
 ): BaseViewModel()  {
     private val mutableImageIntent = MutableLiveData<Intent>()
@@ -28,8 +31,11 @@ class NoteViewModel @Inject constructor(
     private val mutableImageUri = MutableLiveData<Uri>()
     val imageUri: LiveData<Uri> = mutableImageUri
 
-    fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder) {
-        disposable += addNoteUseCase(noteRecyclerHolder.toDomain())
+    private val mutableImageBitmap = MutableLiveData<Bitmap>()
+    val imageBitmap: LiveData<Bitmap> = mutableImageBitmap
+
+    fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap) {
+        disposable += addNoteUseCase(noteRecyclerHolder.toDomain(), newImage)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(
@@ -71,4 +77,18 @@ class NoteViewModel @Inject constructor(
             }
         }
     }
-}
+
+    fun loadImage(key: String) {
+        disposable += fileUseCase(key)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe (
+                { bitmap ->
+                    mutableImageBitmap.postValue(bitmap)
+                },
+                {
+                    Log.d("tag", "error $it.toString()")
+                }
+            )
+    }
+ }

@@ -1,23 +1,26 @@
 package com.example.notes.domain.repository
 
+import android.graphics.Bitmap
 import com.example.notes.domain.dataSource.DataSource
 import com.example.notes.domain.enitites.NoteEntity
+import com.example.notes.domain.enitites.replaceImage
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class Repository @Inject constructor(
     private val dataSource: DataSource
 ) {
-    fun addNote(noteEntity: NoteEntity): Completable {
-        return dataSource.addNote(noteEntity)
+    fun addNote(noteEntity: NoteEntity, bitmap: Bitmap): Completable{
+        return dataSource.deleteImageById(noteEntity.id).andThen(Completable.fromSingle(
+            dataSource.saveImage(bitmap).flatMap {
+                dataSource.addNote(noteEntity.replaceImage(it))
+            }
+        ))
     }
 
-    fun getNotes(): Single<List<NoteEntity>> {
-        return dataSource.getNotes()
-    }
+    fun getNotes() = dataSource.getNotes()
 
-    fun deleteNote(id: Int): Completable {
-        return dataSource.delete(id)
-    }
+    fun deleteNote(id: Int): Completable = dataSource.deleteImageById(id).andThen(dataSource.deleteNote(id))
+
+    fun loadImage(key: String) = dataSource.loadImage(key)
 }

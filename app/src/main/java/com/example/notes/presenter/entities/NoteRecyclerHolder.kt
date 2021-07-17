@@ -10,7 +10,7 @@ data class NoteRecyclerHolder (
     val header: String,
     val desc: String,
     val body: String,
-    val image: String
+    var image: String
 ) : Parcelable
 
 fun NoteEntity.toPresentation(): NoteRecyclerHolder {
