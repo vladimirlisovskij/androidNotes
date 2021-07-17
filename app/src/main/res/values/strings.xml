@@ -91,4 +91,10 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="note_edit_header">Заголовок</string>
+    <string name="note_edit_desc">Краткое описание</string>
+    <string name="note_edit_body">Текст заметки</string>
+    <string name="note_edit_btn_apply">apply</string>
+    <string name="note_edit_btn_delete">delete</string>
+    <string name="recycler_addnote">add Note</string>
 </resources>
