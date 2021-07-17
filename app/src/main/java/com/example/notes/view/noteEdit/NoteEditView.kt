@@ -37,7 +37,11 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     }
 
     private val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
-    private val lruCache = LruCache<String, Bitmap>(maxMemory)
+    private val lruCache = object: LruCache<String, Bitmap>(maxMemory) {
+        override fun sizeOf(key: String, value: Bitmap): Int {
+            return value.byteCount / 1024
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Injector.component.inject(this)
