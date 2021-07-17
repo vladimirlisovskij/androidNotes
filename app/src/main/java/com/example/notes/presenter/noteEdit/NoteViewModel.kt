@@ -1,6 +1,12 @@
 package com.example.notes.presenter.noteEdit
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.notes.base.BaseViewModel
 import com.example.notes.domain.useCases.AddNoteUseCase
 import com.example.notes.domain.useCases.DelNoteUseCase
@@ -16,6 +22,12 @@ class NoteViewModel @Inject constructor(
     private val delNoteUseCase: DelNoteUseCase,
     private val coordinator: Coordinator
 ): BaseViewModel()  {
+    private val mutableImageIntent = MutableLiveData<Intent>()
+    val imageIntent: LiveData<Intent> = mutableImageIntent
+
+    private val mutableImageUri = MutableLiveData<Uri>()
+    val imageUri: LiveData<Uri> = mutableImageUri
+
     fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder) {
         disposable += addNoteUseCase(noteRecyclerHolder.toDomain())
             .observeOn(AndroidSchedulers.mainThread())
@@ -46,5 +58,17 @@ class NoteViewModel @Inject constructor(
                     Log.d("tag", "error $it.toString()")
                 }
             )
+    }
+
+    fun onImageClick() {
+        mutableImageIntent.postValue(Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+    }
+
+    fun onActivityResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let {
+                mutableImageUri.postValue(it)
+            }
+        }
     }
 }

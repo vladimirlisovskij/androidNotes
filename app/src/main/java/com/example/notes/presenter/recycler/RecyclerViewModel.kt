@@ -37,7 +37,7 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun onAddNoteClick() {
-        coordinator.openNoteEditor(NoteRecyclerHolder(0, "", "", ""))
+        coordinator.openNoteEditor(NoteRecyclerHolder(0, "", "", "", "123"))
     }
 
     fun onItemClick(noteRecyclerHolder: NoteRecyclerHolder) {

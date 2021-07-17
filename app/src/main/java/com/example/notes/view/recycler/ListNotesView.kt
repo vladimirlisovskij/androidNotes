@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notes.R
-import com.example.notes.di.Injector
 import com.example.notes.base.BaseView
 import com.example.notes.databinding.FragRecyclerBinding
+import com.example.notes.di.Injector
 import com.example.notes.presenter.recycler.NoteRecyclerAdapter
 import com.example.notes.presenter.recycler.RecyclerViewModel
 import javax.inject.Inject
@@ -19,7 +19,6 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
     @Inject override lateinit var viewModel: RecyclerViewModel
 
     private val adapter = NoteRecyclerAdapter()
-
     private lateinit var binding: FragRecyclerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
