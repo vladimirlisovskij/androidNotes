@@ -44,14 +44,19 @@ class RecyclerViewModel @Inject constructor(
                 }
             )
 
-        coordinator.collector.code = RECYCLED_BACK_CODE
+        coordinator.addKey(RECYCLED_BACK_CODE)
 
-        disposable += coordinator.collector.getSubject().subscribe {
+        disposable += coordinator.keySubject.subscribe {
             if (it == RECYCLED_BACK_CODE) {
                 if (isSelected) onNavigationBack()
-                else coordinator.collector.emit()
+                else coordinator.back()
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        coordinator.popKey()
     }
 
     fun onAddNoteClick() {

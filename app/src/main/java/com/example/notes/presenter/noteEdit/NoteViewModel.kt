@@ -42,17 +42,22 @@ class NoteViewModel @Inject constructor(
     private var isOpenImage = false
 
     init {
-        coordinator.collector.code = NOTEEDIT_BACK_CODE
+        coordinator.addKey(NOTEEDIT_BACK_CODE)
 
-        disposable += coordinator.collector.getSubject().subscribe {
+        disposable += coordinator.keySubject.subscribe {
             if (it == NOTEEDIT_BACK_CODE) {
                 if (isOpenImage) {
                     isOpenImage = false
                     mutableOpenImage.postValue(false)
                 }
-                else coordinator.collector.emit()
+                else coordinator.back()
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        coordinator.popKey()
     }
 
     fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap?) {
@@ -61,11 +66,11 @@ class NoteViewModel @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     {
-                        coordinator.openListNote()
+                        coordinator.back()
                         Log.d("tag", "insert OK")
                     },
                     {
-                        coordinator.openListNote()
+                        coordinator.back()
                         Log.d("tag", "error on apply get $it.toString()")
                     }
                 )
@@ -77,11 +82,11 @@ class NoteViewModel @Inject constructor(
             .subscribeOn(Schedulers.io())
             .subscribe(
                 {
-                    coordinator.openListNote()
+                    coordinator.back()
                     Log.d("tag", "del OK")
                 },
                 {
-                    coordinator.openListNote()
+                    coordinator.back()
                     Log.d("tag", "error on del $it.toString()")
                 }
             )
@@ -93,7 +98,7 @@ class NoteViewModel @Inject constructor(
     }
 
     fun onCancelClick() {
-        coordinator.openListNote()
+        coordinator.back()
     }
 
     fun onImageClick() {

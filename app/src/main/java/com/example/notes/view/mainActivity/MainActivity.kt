@@ -12,7 +12,6 @@ import javax.inject.Inject
 
 class MainActivity
     : AppCompatActivity()
-    , OnBackListener.BackListener
 {
     @Inject lateinit var viewModel: MainViewModel
     @Inject lateinit var navigatorHolder: NavigatorHolder
@@ -22,7 +21,6 @@ class MainActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Injector.component.inject(this)
-        onBackListener.registerForCalls(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -33,11 +31,6 @@ class MainActivity
         onBackListener.emit()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        onBackListener.dispose()
-    }
-
     override fun onResume() {
         super.onResume()
         navigatorHolder.setNavigator(navigator)
@@ -46,9 +39,5 @@ class MainActivity
     override fun onPause() {
         navigatorHolder.removeNavigator()
         super.onPause()
-    }
-
-    override fun onBack() {
-        super.onBackPressed()
     }
 }
