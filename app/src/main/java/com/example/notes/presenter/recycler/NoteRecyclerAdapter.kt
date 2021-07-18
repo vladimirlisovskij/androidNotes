@@ -5,12 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
+import com.example.notes.application.MainApplication
 import com.example.notes.databinding.ItemRecyclerNoteBinding
 import com.example.notes.presenter.entities.NoteRecyclerHolder
+import javax.inject.Inject
 
-class NoteRecyclerAdapter: RecyclerView.Adapter<NoteRecyclerAdapter.NoteViewHolder>() {
+class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecyclerAdapter.NoteViewHolder>() {
     inner class NoteViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         private val binding = ItemRecyclerNoteBinding.bind(itemView)
+        private val res = MainApplication.instance.resources
 
         var note: NoteRecyclerHolder? = null
             set (dataFormContainerList) {
@@ -23,14 +26,47 @@ class NoteRecyclerAdapter: RecyclerView.Adapter<NoteRecyclerAdapter.NoteViewHold
                 }
             }
 
+
+        var isSelected: Boolean = false
+            set(value) {
+                field = value
+                if (field) {
+                    binding.tvHeader.setTextColor(res.getColor(R.color.RecyclerItem_Header_Selected))
+                    binding.tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
+                    binding.layout.setBackgroundResource(R.drawable.bg_item_recycler_selected)
+                } else {
+                    binding.tvHeader.setTextColor(res.getColor(R.color.RecyclerItem_Header_Default))
+                    binding.tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
+                    binding.layout.setBackgroundResource(R.drawable.bg_item_recycler)
+                }
+            }
+
         init {
+            isSelected = false
             with(binding) {
+                layout.setOnLongClickListener {
+                    note?.let {
+                        if (isSelectedMode) {
+                            isSelected = !isSelected
+                        } else {
+                            isSelected = true
+                            recyclerViewModel?.onLongTab()
+                        }
+                    }
+                    true
+                }
                 layout.setOnClickListener {
-                    note?.let { recyclerViewModel?.onItemClick(it) }
+                    if (isSelectedMode) {
+                        isSelected = !isSelected
+                    } else {
+                        note?.let { recyclerViewModel?.onItemClick(it) }
+                    }
                 }
             }
         }
     }
+
+    var isSelectedMode = false
 
     var recyclerViewModel: RecyclerViewModel? = null
 

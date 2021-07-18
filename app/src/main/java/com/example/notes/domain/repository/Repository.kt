@@ -11,7 +11,7 @@ class Repository @Inject constructor(
     private val dataSource: DataSource
 ) {
     fun addNote(noteEntity: NoteEntity, bitmap: Bitmap?): Completable{
-        return dataSource.deleteImageById(noteEntity.id).andThen(Completable.fromSingle(
+        return dataSource.deleteImageById(listOf(noteEntity.id)).andThen(Completable.fromSingle(
             dataSource.saveImage(bitmap).flatMap {
                 dataSource.addNote(noteEntity.replaceImage(it))
             }
@@ -20,7 +20,7 @@ class Repository @Inject constructor(
 
     fun getNotes() = dataSource.getNotes()
 
-    fun deleteNote(id: Int): Completable = dataSource.deleteImageById(id).andThen(dataSource.deleteNote(id))
+    fun deleteNote(id: List<Long>): Completable = dataSource.deleteImageById(id).andThen(dataSource.deleteNote(id))
 
     fun loadImage(key: String) = dataSource.loadImage(key)
 }

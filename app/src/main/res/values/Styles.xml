@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RecyclerItem.Selected" parent="Widget.AppCompat.Button">
+        <item name="android:textAppearance">@style/RecyclerItem.Selected</item>
+        <item name="android:background">@drawable/bg_item_recycler_selected</item>
+    </style>
+
+<style name="RecyclerItem.Default" parent="Widget.AppCompat.Button">
+    <item name="android:textAppearance">@style/RecyclerItem.Default</item>
+    <item name="android:background">@drawable/bg_item_recycler</item>
+</style>
+</resources>

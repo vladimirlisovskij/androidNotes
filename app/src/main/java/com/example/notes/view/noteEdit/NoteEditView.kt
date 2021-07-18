@@ -1,17 +1,17 @@
 package com.example.notes.view.noteEdit
 
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
 import com.example.notes.R
 import com.example.notes.base.BaseView
 import com.example.notes.databinding.FragNoteEditBinding
 import com.example.notes.di.Injector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.noteEdit.NoteViewModel
-import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
 private const val ARG_HOLDER = "ARG_HOLDER"
@@ -28,7 +28,8 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     @Inject override lateinit var viewModel: NoteViewModel
 
     private var holder: NoteRecyclerHolder? = null
-    private var noteID: Int = 0
+    private var curBitmap: Bitmap? = null
+    private var noteID: Long = 0
     private lateinit var binding: FragNoteEditBinding
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         viewModel.onActivityResult(it)
@@ -59,7 +60,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                             body = etBody.text.toString(),
                             image = oldKey
                         ),
-                        (image.drawable as? BitmapDrawable)?.bitmap
+                        curBitmap
                     )
                 }
             }
@@ -83,14 +84,11 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
 
         }
 
-        viewModel.imageUri.observe(viewLifecycleOwner) {
-            Picasso
-                .get()
-                .load(it)
-                .noPlaceholder()
-                .centerCrop()
-                .fit()
-                .into(binding.image)
+        viewModel.imageUri.observe(viewLifecycleOwner) { uri ->
+            activity?.contentResolver?.let {
+                curBitmap = MediaStore.Images.Media.getBitmap(it, uri)
+                loadBitmap()
+            }
         }
 
         viewModel.imageIntent.observe(viewLifecycleOwner) {
@@ -98,7 +96,17 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
         }
 
         viewModel.imageBitmap.observe(viewLifecycleOwner) {
-            binding.image.setImageBitmap(it)
+            if (it != null) {
+                curBitmap = it
+                loadBitmap()
+            }
         }
+    }
+
+    private fun loadBitmap() {
+        Glide.with(this)
+            .load(curBitmap)
+            .centerCrop()
+            .into(binding.image)
     }
 }

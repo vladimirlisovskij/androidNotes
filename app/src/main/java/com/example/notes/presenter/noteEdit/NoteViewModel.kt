@@ -3,6 +3,7 @@ package com.example.notes.presenter.noteEdit
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResult
@@ -17,6 +18,8 @@ import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.entities.toDomain
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.io.File
+import java.io.FileInputStream
 import javax.inject.Inject
 
 class NoteViewModel @Inject constructor(
@@ -36,22 +39,22 @@ class NoteViewModel @Inject constructor(
 
     fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap?) {
         disposable += addNoteUseCase(noteRecyclerHolder.toDomain(), newImage)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(
-                {
-                    coordinator.openListNote()
-                    Log.d("tag", "insert OK")
-                },
-                {
-                    coordinator.openListNote()
-                    Log.d("tag", "error on apply get $it.toString()")
-                }
-            )
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    {
+                        coordinator.openListNote()
+                        Log.d("tag", "insert OK")
+                    },
+                    {
+                        coordinator.openListNote()
+                        Log.d("tag", "error on apply get $it.toString()")
+                    }
+                )
     }
 
-    fun onDelClick(id: Int) {
-        disposable += delNoteUseCase(id)
+    fun onDelClick(id: Long) {
+        disposable += delNoteUseCase(listOf(id))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class DelNoteUseCase @Inject constructor(
     private val repository: Repository
 ) {
-    operator fun invoke(id: Int): Completable {
+    operator fun invoke(id: List<Long>): Completable {
         return repository.deleteNote(id)
     }
 }

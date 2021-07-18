@@ -8,7 +8,9 @@ import com.example.notes.view.mainActivity.MainActivity
 import com.example.notes.view.noteEdit.NoteEditView
 import com.example.notes.view.recycler.ListNotesView
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(modules = [PresenterModule::class, DataModule::class])
 interface MainComponent {
     fun inject(target: MainActivity)

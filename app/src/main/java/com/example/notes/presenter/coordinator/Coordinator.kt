@@ -5,8 +5,9 @@ import com.example.notes.view.noteEdit.NoteEditView
 import com.example.notes.view.recycler.ListNotesView
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.FragmentScreen
+import javax.inject.Inject
 
-class Coordinator(
+class Coordinator @Inject constructor(
     private val router: Router
 ){
 

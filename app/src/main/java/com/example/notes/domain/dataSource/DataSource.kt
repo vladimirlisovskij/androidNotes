@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.core.Single
 interface DataSource {
     fun addNote(noteEntity: NoteEntity): Single<Long>
 
-    fun deleteNote(noteID: Int): Completable
+    fun deleteNote(noteID: List<Long>): Completable
 
     fun getNotes(): Single<List<NoteEntity>>
 
@@ -16,5 +16,5 @@ interface DataSource {
 
     fun loadImage(key: String): Single<Bitmap>
 
-    fun deleteImageById(noteID: Int): Completable
+    fun deleteImageById(noteID: List<Long>): Completable
 }

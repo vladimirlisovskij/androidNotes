@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NoteRecyclerHolder (
-    val id: Int,
+    val id: Long,
     val header: String,
     val desc: String,
     val body: String,

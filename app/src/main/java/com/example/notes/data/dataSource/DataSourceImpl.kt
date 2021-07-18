@@ -30,18 +30,20 @@ class DataSourceImpl @Inject constructor(
         return employeeDao.insert(noteEntity.toData())
     }
 
-    override fun deleteImageById(noteID: Int): Completable {
+    override fun deleteImageById(noteID: List<Long>): Completable {
         return Completable.fromAction {
-            employeeDao.getById(noteID)?.image?.let {
-                with(File(directory, it)) {
-                    if(exists()) delete()
+            noteID.forEach {
+                employeeDao.getById(it)?.image?.let {
+                    with(File(directory, it)) {
+                        if(exists()) delete()
+                    }
                 }
             }
         }
     }
 
-    override fun deleteNote(noteID: Int): Completable {
-        return employeeDao.deleteById(noteID)
+    override fun deleteNote(noteID: List<Long>): Completable {
+        return employeeDao.deleteByListId(noteID)
     }
 
     override fun getNotes(): Single<List<NoteEntity>> {

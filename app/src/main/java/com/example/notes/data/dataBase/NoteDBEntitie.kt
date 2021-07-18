@@ -15,7 +15,7 @@ data class Employee(
 
 fun NoteEntity.toData(): Employee {
     return Employee(
-        id= this.id.toLong(),
+        id= this.id,
         header=this.header,
         desc=this.desc,
         body=this.body,
@@ -25,7 +25,7 @@ fun NoteEntity.toData(): Employee {
 
 fun Employee.toDomain(): NoteEntity {
     return NoteEntity(
-        id=this.id.toInt(),
+        id=this.id,
         header=this.header,
         desc=this.desc,
         body=this.body,
