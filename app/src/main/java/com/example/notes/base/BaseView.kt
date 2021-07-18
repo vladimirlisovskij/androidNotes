@@ -7,4 +7,9 @@ abstract class BaseView<T: BaseViewModel>(
     @LayoutRes layoutID: Int
 ): Fragment(layoutID) {
     abstract val viewModel: T
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onCleared()
+    }
 }

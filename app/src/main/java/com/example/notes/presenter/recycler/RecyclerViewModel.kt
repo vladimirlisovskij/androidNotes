@@ -13,11 +13,14 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
+const val RECYCLED_BACK_CODE = "RECYCLED_BACK_CODE"
+
 class RecyclerViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
     private val delNoteUseCase: DelNoteUseCase,
     private val coordinator: Coordinator
 ): BaseViewModel()  {
+    private var isSelected = false
 
     private val mutableNoteList = MutableLiveData<List<NoteRecyclerHolder>>()
     val noteList: LiveData<List<NoteRecyclerHolder>> = mutableNoteList
@@ -40,6 +43,15 @@ class RecyclerViewModel @Inject constructor(
                     Log.d("tag", "error on getNotes $it.toString()")
                 }
             )
+
+        coordinator.collector.code = RECYCLED_BACK_CODE
+
+        disposable += coordinator.collector.getSubject().subscribe {
+            if (it == RECYCLED_BACK_CODE) {
+                if (isSelected) onNavigationBack()
+                else coordinator.collector.emit()
+            }
+        }
     }
 
     fun onAddNoteClick() {
@@ -51,14 +63,18 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun onLongTab() {
+        isSelected = true
         mutableSelectedMode.postValue(true)
     }
 
     fun onNavigationBack() {
+        isSelected = false
         mutableSelectedMode.postValue(false)
     }
 
     fun onDeleteClick(listNotes: List<NoteRecyclerHolder>) {
+        isSelected = false
+        mutableSelectedMode.postValue(false)
         disposable += delNoteUseCase(listNotes.map { it.id })
             .andThen(getNotesUseCase())
             .observeOn(AndroidSchedulers.mainThread())
@@ -66,14 +82,12 @@ class RecyclerViewModel @Inject constructor(
             .subscribe(
                 { notes ->
                     Log.d("tag", "getNotes OK")
-                    mutableSelectedMode.postValue(false)
                     mutableNoteList.postValue(notes.map {
                         it.toPresentation()
                     })
                 },
                 {
                     Log.d("tag", "error on getNotes $it.toString()")
-                    mutableSelectedMode.postValue(false)
                 }
             )
     }
