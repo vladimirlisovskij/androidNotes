@@ -20,8 +20,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-const val NOTEEDIT_BACK_CODE = "NOTEEDIT_BACK_CODE"
-
 class NoteViewModel @Inject constructor(
     private val addNoteUseCase: AddNoteUseCase,
     private val delNoteUseCase: DelNoteUseCase,

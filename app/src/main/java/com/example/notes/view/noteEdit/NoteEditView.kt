@@ -62,14 +62,12 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
             val builder = AlertDialog.Builder(it)
             builder.apply {
                 setMessage("Что вы хотите сделать?")
-                setPositiveButton("открыть изображение"
-                ) { _, _ ->
+                setPositiveButton("открыть изображение") { _, _ ->
                     curBitmap?.let {
                         viewModel.onOpenImage()
                     }
                 }
-                setNeutralButton("изменить изображние"
-                ) { _, _ ->
+                setNeutralButton("изменить изображние") { _, _ ->
                     viewModel.onImageClick()
                 }
             }

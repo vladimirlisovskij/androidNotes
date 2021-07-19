@@ -14,8 +14,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-const val RECYCLED_BACK_CODE = "RECYCLED_BACK_CODE"
-
 class RecyclerViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
     private val delNoteUseCase: DelNoteUseCase,
