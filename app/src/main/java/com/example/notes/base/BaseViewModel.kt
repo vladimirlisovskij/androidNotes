@@ -1,5 +1,9 @@
 package com.example.notes.base
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -11,9 +15,27 @@ abstract class BaseViewModel: ViewModel() {
 
     protected val disposable = CompositeDisposable()
 
+    open fun onCreate() { }
 
-    public override fun onCleared() {
+    open fun onCreateView() { }
+
+    open fun onViewCreated() { }
+
+    open fun onViewStateRestored() { }
+
+    open fun onStart() { }
+
+    open fun onResume() { }
+
+    open fun onPause() { }
+
+    open fun onStop() { }
+
+    open fun onSaveInstanceState() { }
+
+    open fun onDestroyView() { }
+
+    open fun onDestroy() {
         disposable.dispose()
-        super.onCleared()
     }
 }

@@ -41,7 +41,8 @@ class NoteViewModel @Inject constructor(
 
     private var isOpenImage = false
 
-    init {
+    override fun onCreate() {
+        super.onCreate()
         onBackCollector.subscribe {
             if (isOpenImage) {
                 isOpenImage = false
@@ -51,8 +52,8 @@ class NoteViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    override fun onDestroy() {
+        super.onDestroy()
         onBackCollector.disposeLastSubscription()
     }
 

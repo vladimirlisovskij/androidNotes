@@ -139,16 +139,22 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
         return when(item.itemId) {
             R.id.action_apply_note -> {
                 with(binding) {
-                    viewModel.onApplyClick(
-                        NoteRecyclerHolder(
-                            id = noteID,
-                            header = etHeader.text.toString(),
-                            desc = etDesc.text.toString(),
-                            body = etBody.text.toString(),
-                            image = oldKey
-                        ),
-                        curBitmap
-                    )
+                    if (etHeader.text.toString().isNotBlank()) {
+                        viewModel.onApplyClick(
+                            NoteRecyclerHolder(
+                                id = noteID,
+                                header = etHeader.text.toString(),
+                                desc = etDesc.text.toString(),
+                                body = etBody.text.toString(),
+                                image = oldKey
+                            ),
+                            curBitmap
+                        )
+                    } else {
+                        activity?.let {
+                            etHeader.setBackgroundColor(it.applicationContext.resources.getColor(R.color.errorRed))
+                        }
+                    }
                 }
                 true
             }

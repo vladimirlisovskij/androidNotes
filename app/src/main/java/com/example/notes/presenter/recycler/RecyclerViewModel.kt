@@ -29,6 +29,18 @@ class RecyclerViewModel @Inject constructor(
     val selectedMode: LiveData<Boolean> = mutableSelectedMode
 
     init {
+        onBackCollector.subscribe {
+            if (isSelected) onNavigationBack()
+            else coordinator.back()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onBackCollector.disposeLastSubscription()
+    }
+
+    override fun onResume() {
         disposable += getNotesUseCase()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
@@ -43,16 +55,6 @@ class RecyclerViewModel @Inject constructor(
                     Log.d("tag", "error on getNotes $it.toString()")
                 }
             )
-
-        onBackCollector.subscribe {
-            if (isSelected) onNavigationBack()
-            else coordinator.back()
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        onBackCollector.disposeLastSubscription()
     }
 
     fun onAddNoteClick() {

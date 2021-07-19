@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="errorRed">#FF8585</color>
     <color name="RecyclerItem.Header.Default">#000000</color>
     <color name="RecyclerItem.Header.Selected">#FFFFFF</color>
     <color name="RecyclerItem.Body.Default">#393939</color>
