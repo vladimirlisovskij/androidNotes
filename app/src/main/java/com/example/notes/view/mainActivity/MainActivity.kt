@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.notes.R
 import com.example.notes.di.Injector
-import com.example.notes.presenter.coordinator.OnBackListener
+import com.example.notes.presenter.coordinator.OnBackEmitter
 import com.example.notes.presenter.mainActivity.MainViewModel
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
@@ -15,7 +15,7 @@ class MainActivity
 {
     @Inject lateinit var viewModel: MainViewModel
     @Inject lateinit var navigatorHolder: NavigatorHolder
-    @Inject lateinit var onBackListener: OnBackListener
+    @Inject lateinit var onBackEmitter: OnBackEmitter
 
     private val navigator = AppNavigator(this, R.id.fragmentContainer)
 
@@ -28,7 +28,7 @@ class MainActivity
     }
 
     override fun onBackPressed() {
-        onBackListener.emit()
+        onBackEmitter.emit()
     }
 
     override fun onResume() {

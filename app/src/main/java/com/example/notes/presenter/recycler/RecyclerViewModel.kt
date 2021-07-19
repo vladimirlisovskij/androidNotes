@@ -7,6 +7,7 @@ import com.example.notes.base.BaseViewModel
 import com.example.notes.domain.useCases.DelNoteUseCase
 import com.example.notes.domain.useCases.GetNotesUseCase
 import com.example.notes.presenter.coordinator.Coordinator
+import com.example.notes.presenter.coordinator.OnBackCollector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.entities.toPresentation
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -18,7 +19,8 @@ const val RECYCLED_BACK_CODE = "RECYCLED_BACK_CODE"
 class RecyclerViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
     private val delNoteUseCase: DelNoteUseCase,
-    private val coordinator: Coordinator
+    private val coordinator: Coordinator,
+    private val onBackCollector: OnBackCollector
 ): BaseViewModel()  {
     private var isSelected = false
 
@@ -44,19 +46,15 @@ class RecyclerViewModel @Inject constructor(
                 }
             )
 
-        coordinator.addKey(RECYCLED_BACK_CODE)
-
-        disposable += coordinator.keySubject.subscribe {
-            if (it == RECYCLED_BACK_CODE) {
-                if (isSelected) onNavigationBack()
-                else coordinator.back()
-            }
+        onBackCollector.subscribe {
+            if (isSelected) onNavigationBack()
+            else coordinator.back()
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        coordinator.popKey()
+        onBackCollector.disposeLastSubscription()
     }
 
     fun onAddNoteClick() {

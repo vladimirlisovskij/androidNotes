@@ -13,6 +13,7 @@ import com.example.notes.domain.useCases.AddNoteUseCase
 import com.example.notes.domain.useCases.DelNoteUseCase
 import com.example.notes.domain.useCases.LoadImageUseCase
 import com.example.notes.presenter.coordinator.Coordinator
+import com.example.notes.presenter.coordinator.OnBackCollector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.entities.toDomain
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -25,7 +26,8 @@ class NoteViewModel @Inject constructor(
     private val addNoteUseCase: AddNoteUseCase,
     private val delNoteUseCase: DelNoteUseCase,
     private val fileUseCase: LoadImageUseCase,
-    private val coordinator: Coordinator
+    private val coordinator: Coordinator,
+    private val onBackCollector: OnBackCollector
 ): BaseViewModel()  {
     private val mutableImageIntent = MutableLiveData<Intent>()
     val imageIntent: LiveData<Intent> = mutableImageIntent
@@ -42,22 +44,18 @@ class NoteViewModel @Inject constructor(
     private var isOpenImage = false
 
     init {
-        coordinator.addKey(NOTEEDIT_BACK_CODE)
-
-        disposable += coordinator.keySubject.subscribe {
-            if (it == NOTEEDIT_BACK_CODE) {
-                if (isOpenImage) {
-                    isOpenImage = false
-                    mutableOpenImage.postValue(false)
-                }
-                else coordinator.back()
+        onBackCollector.subscribe {
+            if (isOpenImage) {
+                isOpenImage = false
+                mutableOpenImage.postValue(false)
             }
+            else coordinator.back()
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        coordinator.popKey()
+        onBackCollector.disposeLastSubscription()
     }
 
     fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap?) {

@@ -1,7 +1,8 @@
 package com.example.notes.presenter.di
 
 import com.example.notes.presenter.coordinator.Coordinator
-import com.example.notes.presenter.coordinator.OnBackListener
+import com.example.notes.presenter.coordinator.OnBackEmitter
+import com.example.notes.presenter.coordinator.OnBackFabric
 import com.example.notes.presenter.coordinator.Signal
 import com.github.terrakok.cicerone.Cicerone
 import dagger.Module
@@ -12,10 +13,7 @@ import javax.inject.Singleton
 @Module
 class PresenterModule {
     private val cicerone = Cicerone.create()
-
-    private val coordinatorSubject: PublishSubject<Signal> = PublishSubject.create()
-
-    private val onBackListener = OnBackListener(coordinatorSubject)
+    private val onBackFabric = OnBackFabric()
 
     @Provides
     @Singleton
@@ -23,9 +21,13 @@ class PresenterModule {
 
     @Provides
     @Singleton
-    fun provideCoordinator() = Coordinator(cicerone.router, coordinatorSubject)
+    fun provideRouter() = cicerone.router
 
     @Provides
     @Singleton
-    fun provideListener() = onBackListener
+    fun provideEmitter() = onBackFabric.emitter
+
+    @Provides
+    @Singleton
+    fun provideCollector() = onBackFabric.collector
 }
