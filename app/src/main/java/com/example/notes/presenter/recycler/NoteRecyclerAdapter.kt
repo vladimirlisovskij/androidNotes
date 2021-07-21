@@ -22,6 +22,8 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
                     with(binding) {
                         tvHeader.text = it.header
                         tvBody.text = it.desc
+                        tvCreationDate.text=itemView.resources.getString(R.string.created, it.creationDate)
+                        tvLastEditDate.text=itemView.resources.getString(R.string.created, it.lastEditDate)
                     }
                 }
             }
@@ -30,14 +32,20 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
         var isSelected: Boolean = false
             set(value) {
                 field = value
-                if (field) {
-                    binding.tvHeader.setTextColor(res.getColor(R.color.RecyclerItem_Header_Selected))
-                    binding.tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
-                    binding.layout.setBackgroundResource(R.drawable.bg_item_recycler_selected)
-                } else {
-                    binding.tvHeader.setTextColor(res.getColor(R.color.RecyclerItem_Header_Default))
-                    binding.tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
-                    binding.layout.setBackgroundResource(R.drawable.bg_item_recycler)
+                with(binding) {
+                    if (field) {
+                        tvHeader.setTextColor(res.getColor(R.color.RecyclerItem_Header_Selected))
+                        tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
+                        tvCreationDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
+                        tvLastEditDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
+                        layout.setBackgroundResource(R.drawable.bg_item_recycler_selected)
+                    } else {
+                        tvHeader.setTextColor(res.getColor(R.color.RecyclerItem_Header_Default))
+                        tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
+                        tvCreationDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
+                        tvLastEditDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
+                        layout.setBackgroundResource(R.drawable.bg_item_recycler)
+                    }
                 }
             }
 

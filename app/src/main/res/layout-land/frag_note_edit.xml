@@ -35,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="300dp"
         android:hint="@string/note_edit_desc"
         android:inputType="textLongMessage"
         android:maxLength="30"
@@ -44,14 +45,14 @@
 
     <EditText
         android:id="@+id/etBody"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:gravity="top"
         android:hint="@string/note_edit_body"
         android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/etDesc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etDesc" />
 
@@ -59,27 +60,25 @@
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:background="@color/purple_500"
         android:src="@drawable/ic_photo_camera"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etBody"
-        app:layout_constraintVertical_bias="0.51" />
+        app:layout_constraintStart_toEndOf="@+id/etBody"
+        app:layout_constraintTop_toBottomOf="@+id/tbNoteEdit" />
 
-    <ImageView
-        android:id="@+id/imageBig"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+
+    <ImageView android:id="@+id/imageBig"
         android:background="#576200EE"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tbNoteEdit"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars"
+        android:visibility="gone"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        />
 
     <ProgressBar
         android:id="@+id/noteEditProgressBar"

@@ -10,7 +10,9 @@ data class NoteRecyclerHolder (
     val header: String,
     val desc: String,
     val body: String,
-    var image: String
+    var image: String,
+    val creationDate: String,
+    var lastEditDate: String
 ) : Parcelable
 
 fun NoteEntity.toPresentation(): NoteRecyclerHolder {
@@ -19,7 +21,9 @@ fun NoteEntity.toPresentation(): NoteRecyclerHolder {
         header=this.header,
         desc=this.desc,
         body=this.body,
-        image=this.image
+        image=this.image,
+        creationDate=this.creationDate,
+        lastEditDate=this.lastEditDate
     )
 }
 
@@ -29,6 +33,8 @@ fun NoteRecyclerHolder.toDomain(): NoteEntity {
         header=this.header,
         desc=this.desc,
         body=this.body,
-        image=this.image
+        image=this.image,
+        creationDate=this.creationDate,
+        lastEditDate=this.lastEditDate
     )
 }

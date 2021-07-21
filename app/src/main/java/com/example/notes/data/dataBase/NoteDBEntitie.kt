@@ -10,7 +10,9 @@ data class Employee(
     val header: String,
     val desc: String,
     val body: String,
-    val image: String
+    val image: String,
+    val creationDate: String,
+    val lastEditDate: String
 )
 
 fun NoteEntity.toData(): Employee {
@@ -19,7 +21,9 @@ fun NoteEntity.toData(): Employee {
         header=this.header,
         desc=this.desc,
         body=this.body,
-        image=this.image
+        image=this.image,
+        creationDate=this.creationDate,
+        lastEditDate=this.lastEditDate
     )
 }
 
@@ -29,6 +33,8 @@ fun Employee.toDomain(): NoteEntity {
         header=this.header,
         desc=this.desc,
         body=this.body,
-        image=this.image
+        image=this.image,
+        creationDate=this.creationDate,
+        lastEditDate=this.lastEditDate
     )
 }

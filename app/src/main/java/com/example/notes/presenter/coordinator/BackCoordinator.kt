@@ -3,18 +3,16 @@ package com.example.notes.presenter.coordinator
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.*
 
-enum class Signal { EMPTY }
-
 class OnBackEmitter(
-    private val emitter: PublishSubject<Signal>
+    private val emitter: PublishSubject<Unit>
 ){
     fun emit(){
-        emitter.onNext(Signal.EMPTY)
+        emitter.onNext(Unit)
     }
 }
 
 class OnBackCollector(
-    private val collector: PublishSubject<Signal>
+    private val collector: PublishSubject<Unit>
 ) {
     private val commandStack = Stack<(() -> Unit)>()
 
@@ -33,8 +31,8 @@ class OnBackCollector(
     }
 }
 
-class OnBackFabric() {
-    private val subject = PublishSubject.create<Signal>()
+class OnBackFabric {
+    private val subject = PublishSubject.create<Unit>()
 
     val emitter = OnBackEmitter(subject)
     val collector = OnBackCollector(subject)

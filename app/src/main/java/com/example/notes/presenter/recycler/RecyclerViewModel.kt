@@ -28,7 +28,8 @@ class RecyclerViewModel @Inject constructor(
     private val mutableSelectedMode = MutableLiveData<Boolean>()
     val selectedMode: LiveData<Boolean> = mutableSelectedMode
 
-    init {
+    override fun onCreate() {
+        super.onCreate()
         onBackCollector.subscribe {
             if (isSelected) onNavigationBack()
             else coordinator.back()
@@ -58,7 +59,15 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun onAddNoteClick() {
-        coordinator.openNoteEditor(NoteRecyclerHolder(0, "", "", "", ""))
+        coordinator.openNoteEditor(NoteRecyclerHolder(
+            id=0,
+            header="",
+            desc="",
+            body="",
+            image="",
+            creationDate="",
+            lastEditDate=""
+        ))
     }
 
     fun onItemClick(noteRecyclerHolder: NoteRecyclerHolder) {

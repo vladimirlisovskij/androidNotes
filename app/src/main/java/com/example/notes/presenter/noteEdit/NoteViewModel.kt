@@ -39,6 +39,12 @@ class NoteViewModel @Inject constructor(
     private val mutableOpenImage = MutableLiveData<Boolean>()
     val openImage: LiveData<Boolean> = mutableOpenImage
 
+    private val mutableShowProgress = MutableLiveData<Boolean>()
+    val showProgress: LiveData<Boolean> = mutableShowProgress
+
+    private val mutableHideKeyboard = MutableLiveData<Unit>()
+    val hideKeyboard: LiveData<Unit> = mutableHideKeyboard
+
     private var isOpenImage = false
 
     override fun onCreate() {
@@ -48,7 +54,9 @@ class NoteViewModel @Inject constructor(
                 isOpenImage = false
                 mutableOpenImage.postValue(false)
             }
-            else coordinator.back()
+            else {
+                coordinator.back()
+            }
         }
     }
 
@@ -58,35 +66,25 @@ class NoteViewModel @Inject constructor(
     }
 
     fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap?) {
+        mutableShowProgress.postValue(true)
         disposable += addNoteUseCase(noteRecyclerHolder.toDomain(), newImage)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    {
-                        coordinator.back()
-                        Log.d("tag", "insert OK")
-                    },
-                    {
-                        coordinator.back()
-                        Log.d("tag", "error on apply get $it.toString()")
-                    }
-                )
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .doFinally {
+                mutableShowProgress.postValue(false)
+                exit()
+            }
+            .subscribe()
     }
 
     fun onDelClick(id: Long) {
         disposable += delNoteUseCase(listOf(id))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
-            .subscribe(
-                {
-                    coordinator.back()
-                    Log.d("tag", "del OK")
-                },
-                {
-                    coordinator.back()
-                    Log.d("tag", "error on del $it.toString()")
-                }
-            )
+            .doFinally {
+                exit()
+            }
+            .subscribe()
     }
 
     fun onOpenImage(){
@@ -95,7 +93,7 @@ class NoteViewModel @Inject constructor(
     }
 
     fun onCancelClick() {
-        coordinator.back()
+        exit()
     }
 
     fun onImageClick() {
@@ -123,5 +121,10 @@ class NoteViewModel @Inject constructor(
                     Log.d("tag", "error on load $it.toString()")
                 }
             )
+    }
+
+    private fun exit() {
+        mutableHideKeyboard.postValue(Unit)
+        coordinator.back()
     }
  }

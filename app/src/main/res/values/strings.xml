@@ -97,4 +97,6 @@
     <string name="note_edit_btn_apply">apply</string>
     <string name="note_edit_btn_delete">delete</string>
     <string name="recycler_addnote">add Note</string>
+    <string name="edited">Изменено %1$s</string>
+    <string name="created">Создано %1$s</string>
 </resources>

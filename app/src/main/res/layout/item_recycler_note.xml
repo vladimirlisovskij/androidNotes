@@ -27,18 +27,39 @@
 
     <TextView
         android:id="@+id/tvBody"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:textColor="@color/RecyclerItem.Body.Default"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tvHeader"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvHeader"
         app:layout_constraintVertical_bias="1.0"
-        tools:text="Краткое описание"
-        android:textColor="@color/RecyclerItem.Body.Default"/>
+        tools:text="Краткое описание" />
+
+    <TextView
+        android:id="@+id/tvCreationDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        tools:text="Создано 11.06.20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/RecyclerItem.Header.Default"/>
+
+    <TextView
+        android:id="@+id/tvLastEditDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        tools:text="Изменено 11.06.20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCreationDate"
+        android:textColor="@color/RecyclerItem.Header.Default"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

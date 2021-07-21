@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 
@@ -29,6 +30,9 @@ abstract class BaseView<T: BaseViewModel>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.onViewCreated()
+        viewModel.toastMessage.observe(viewLifecycleOwner) {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -70,4 +74,6 @@ abstract class BaseView<T: BaseViewModel>(
         super.onDestroy()
         viewModel.onDestroy()
     }
+
+
 }

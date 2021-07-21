@@ -5,7 +5,9 @@ data class NoteEntity (
     val header: String,
     val desc: String,
     val body: String,
-    val image: String
+    val image: String,
+    val creationDate: String,
+    val lastEditDate: String
 )
 
 fun NoteEntity.replaceImage(newImage: String): NoteEntity {
@@ -14,6 +16,8 @@ fun NoteEntity.replaceImage(newImage: String): NoteEntity {
         header=this.header,
         desc=this.desc,
         body=this.body,
-        image=newImage
+        image=newImage,
+        creationDate=this.creationDate,
+        lastEditDate=this.lastEditDate
     )
 }
