@@ -59,8 +59,10 @@ class GalleryViewModel @Inject constructor(
     }
 
     fun getBitmaps(refs: List<String>) {
+        mutableShowProgress.postValue(true)
         fileUseCase.multiLoadImage(refs).simpleSingleSubscribe {
             mutableBitmapList.postValue(it)
+            mutableShowProgress.postValue(false)
         }
     }
 
