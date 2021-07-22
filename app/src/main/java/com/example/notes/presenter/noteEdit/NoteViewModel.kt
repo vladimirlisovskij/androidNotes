@@ -1,11 +1,6 @@
 package com.example.notes.presenter.noteEdit
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
-import android.util.Log
-import androidx.activity.result.ActivityResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.notes.base.BaseViewModel
@@ -16,47 +11,25 @@ import com.example.notes.presenter.coordinator.Coordinator
 import com.example.notes.presenter.coordinator.OnBackCollector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.entities.toDomain
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.example.notes.presenter.gallery.GalleryViewModel
 import javax.inject.Inject
 
 class NoteViewModel @Inject constructor(
     private val addNoteUseCase: AddNoteUseCase,
     private val delNoteUseCase: DelNoteUseCase,
-    private val fileUseCase: LoadImageUseCase,
     private val coordinator: Coordinator,
     private val onBackCollector: OnBackCollector
 ): BaseViewModel()  {
-    private val mutableImageIntent = MutableLiveData<Intent>()
-    val imageIntent: LiveData<Intent> = mutableImageIntent
-
-    private val mutableImageUri = MutableLiveData<Uri>()
-    val imageUri: LiveData<Uri> = mutableImageUri
-
-    private val mutableImageBitmap = MutableLiveData<Bitmap?>()
-    val imageBitmap: LiveData<Bitmap?> = mutableImageBitmap
-
-    private val mutableOpenImage = MutableLiveData<Boolean>()
-    val openImage: LiveData<Boolean> = mutableOpenImage
-
-    private val mutableShowProgress = MutableLiveData<Boolean>()
-    val showProgress: LiveData<Boolean> = mutableShowProgress
-
     private val mutableHideKeyboard = MutableLiveData<Unit>()
     val hideKeyboard: LiveData<Unit> = mutableHideKeyboard
 
-    private var isOpenImage = false
+    private val mutableListRefs = MutableLiveData<List<String>>()
+    val listRefs: LiveData<List<String>> = mutableListRefs
 
     override fun onCreate() {
         super.onCreate()
         onBackCollector.subscribe {
-            if (isOpenImage) {
-                isOpenImage = false
-                mutableOpenImage.postValue(false)
-            }
-            else {
-                coordinator.back()
-            }
+            exit()
         }
     }
 
@@ -65,62 +38,30 @@ class NoteViewModel @Inject constructor(
         onBackCollector.disposeLastSubscription()
     }
 
-    fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder, newImage: Bitmap?) {
-        mutableShowProgress.postValue(true)
-        disposable += addNoteUseCase(noteRecyclerHolder.toDomain(), newImage)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .doFinally {
-                mutableShowProgress.postValue(false)
-                exit()
-            }
-            .subscribe()
+    fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder) {
+        addNoteUseCase(noteRecyclerHolder.toDomain()).toSingle{}.simpleSingleSubscribe {
+            exit()
+        }
     }
 
     fun onDelClick(id: Long) {
-        disposable += delNoteUseCase(listOf(id))
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .doFinally {
-                exit()
-            }
-            .subscribe()
+        delNoteUseCase(listOf(id)).toSingle{ }.simpleSingleSubscribe{
+            exit()
+        }
     }
 
-    fun onOpenImage(){
-        isOpenImage = true
-        mutableOpenImage.postValue(true)
+    fun onOpenImage(keys: List<String>){
+        coordinator.startGallery(keys)
+            .subscribe {
+                (it as? GalleryViewModel.GalleryResult)?.let { res ->
+                    mutableListRefs.postValue(res.links)
+                }
+            }
+            .addToComposite()
     }
 
     fun onCancelClick() {
         exit()
-    }
-
-    fun onImageClick() {
-        mutableImageIntent.postValue(Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
-    }
-
-    fun onActivityResult(result: ActivityResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let {
-                mutableImageUri.postValue(it)
-            }
-        }
-    }
-
-    fun loadImage(key: String) {
-        disposable += fileUseCase(key)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe (
-                { bitmap ->
-                    mutableImageBitmap.postValue(bitmap)
-                },
-                {
-                    mutableImageBitmap.postValue(null)
-                    Log.d("tag", "error on load $it.toString()")
-                }
-            )
     }
 
     private fun exit() {

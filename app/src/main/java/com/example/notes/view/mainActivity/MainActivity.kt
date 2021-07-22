@@ -16,6 +16,10 @@ import javax.inject.Inject
 class MainActivity
     : AppCompatActivity()
 {
+    private companion object {
+        var firstCreateFlag = false
+    }
+
     @Inject lateinit var viewModel: MainViewModel
     @Inject lateinit var navigatorHolder: NavigatorHolder
     @Inject lateinit var onBackEmitter: OnBackEmitter
@@ -36,12 +40,15 @@ class MainActivity
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Injector.component.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel.onViewReady()
+        if (!firstCreateFlag) viewModel.onViewReady()
+        firstCreateFlag = true
     }
 
     override fun onBackPressed() {

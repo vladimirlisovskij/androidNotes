@@ -16,5 +16,9 @@ interface DataSource {
 
     fun loadImage(key: String): Single<Bitmap>
 
+    fun multiLoadImage(key: List<String>): Single<List<Bitmap>>
+
+    fun multiSaveImage(key: List<Bitmap>): Single<List<String>>
+
     fun deleteImageById(noteID: List<Long>): Completable
 }

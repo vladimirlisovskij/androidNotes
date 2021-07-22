@@ -37,15 +37,11 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     @Inject override lateinit var viewModel: NoteViewModel
 
     private var holder: NoteRecyclerHolder? = null
-    private var curBitmap: Bitmap? = null
+    private var curBitmap = listOf<Bitmap>()
     private var noteID: Long = 0
     private lateinit var binding: FragNoteEditBinding
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        viewModel.onActivityResult(it)
-    }
-    private lateinit var oldKey: String
+    private var oldKey = listOf<String>()
     private lateinit var creationDate: String
-    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Injector.component.inject(this)
@@ -58,22 +54,6 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragNoteEditBinding.bind(view)
-
-        dialog = activity?.let {
-            val builder = AlertDialog.Builder(it)
-            builder.apply {
-                setMessage("Что вы хотите сделать?")
-                setPositiveButton("открыть изображение") { _, _ ->
-                    curBitmap?.let {
-                        viewModel.onOpenImage()
-                    }
-                }
-                setNeutralButton("изменить изображние") { _, _ ->
-                    viewModel.onImageClick()
-                }
-            }
-            builder.create()
-        }
 
         setHasOptionsMenu(true)
 
@@ -91,67 +71,23 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                 etDesc.setText(it.desc)
                 etBody.setText(it.body)
                 noteID = it.id
-                oldKey = it.image
-                viewModel.loadImage(oldKey)
                 creationDate = it.creationDate
+                oldKey=it.image
             }
 
             image.setOnClickListener {
-                if (curBitmap == null) {
-                    viewModel.onImageClick()
-                } else {
-                    dialog?.show()
-                }
+                viewModel.onOpenImage(oldKey)
             }
 
-        }
-
-        viewModel.imageUri.observe(viewLifecycleOwner) { uri ->
-            activity?.contentResolver?.let {
-                curBitmap = MediaStore.Images.Media.getBitmap(it, uri)
-                loadBitmap()
-            }
-        }
-
-        viewModel.imageIntent.observe(viewLifecycleOwner) {
-            resultLauncher.launch(it)
-        }
-
-        viewModel.imageBitmap.observe(viewLifecycleOwner) {
-            if (it != null) {
-                curBitmap = it
-                loadBitmap()
-            }
-        }
-
-        viewModel.showProgress.observe(viewLifecycleOwner) {
-            when(it) {
-                true -> {
-                    binding.noteEditProgressBar.visibility = View.VISIBLE
-                }
-
-                false -> {
-                    binding.noteEditProgressBar.visibility = View.GONE
-                }
-            }
-        }
-
-        viewModel.openImage.observe(viewLifecycleOwner) {
-            when(it) {
-                true -> {
-                    binding.imageBig.visibility = View.VISIBLE
-                    binding.imageBig.setImageBitmap(curBitmap)
-                }
-
-                false -> {
-                    binding.imageBig.visibility = View.GONE
-                }
-            }
         }
 
         viewModel.hideKeyboard.observe(viewLifecycleOwner) {
             val imm = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+        viewModel.listRefs.observe(viewLifecycleOwner) {
+            oldKey = it
         }
     }
 
@@ -177,8 +113,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                                     }
                                 },
                                 lastEditDate=DateTime.now().toStringFormat()
-                            ),
-                            curBitmap
+                            )
                         )
                     } else {
                         activity?.let {

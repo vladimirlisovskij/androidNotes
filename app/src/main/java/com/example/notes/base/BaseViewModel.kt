@@ -1,24 +1,55 @@
 package com.example.notes.base
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.functions.Action
+import io.reactivex.rxjava3.functions.Consumer
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 abstract class BaseViewModel: ViewModel() {
-    protected operator fun CompositeDisposable.plusAssign(disposable: Disposable) {
-        this.add(disposable)
-    }
-
-    protected val mutableToastMessage = MutableLiveData<String>()
+    private val mutableToastMessage = MutableLiveData<String>()
     val toastMessage: LiveData<String> = mutableToastMessage
 
-    protected val disposable = CompositeDisposable()
+    protected fun makeToast(message: String) {
+        mutableToastMessage.postValue(message)
+    }
+
+    protected fun Disposable.addToComposite() {
+        compositeDisposable.add(this)
+    }
+
+    protected fun <T> Single<T>.makeAsync(): Single<T> =
+        this.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+
+
+    protected fun <T> Single<T>.simpleSingleSubscribe(onSuccess: Consumer<T>) {
+        this.makeAsync()
+            .doOnError {
+                Log.d("tag", it.toString())
+            }
+            .subscribe(onSuccess)
+            .addToComposite()
+    }
+
+    protected fun <T> Single<T>.simpleSingleSubscribe(onSuccess: Consumer<T>, onError: Consumer<Throwable>) {
+        this.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .doOnError {
+                Log.d("tag", it.toString())
+            }
+            .subscribe(onSuccess, onError)
+            .addToComposite()
+    }
+
+    private val compositeDisposable = CompositeDisposable()
 
     open fun onCreate() { }
 
@@ -41,6 +72,6 @@ abstract class BaseViewModel: ViewModel() {
     open fun onDestroyView() { }
 
     open fun onDestroy() {
-        disposable.dispose()
+        compositeDisposable.dispose()
     }
 }

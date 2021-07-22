@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.35.1'
     kapt 'com.google.dagger:dagger-compiler:2.35.1'
 
-    implementation("com.github.terrakok:cicerone:7.0")
+    implementation("com.github.terrakok:cicerone:7.1")
 
     implementation "io.reactivex.rxjava3:rxjava:3.0.6"
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
@@ -75,4 +75,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     implementation 'net.danlew:android.joda:2.10.9.1'
+
+    implementation 'com.google.code.gson:gson:2.8.7'
 }

@@ -10,7 +10,7 @@ data class NoteRecyclerHolder (
     val header: String,
     val desc: String,
     val body: String,
-    var image: String,
+    var image: List<String>,
     val creationDate: String,
     var lastEditDate: String
 ) : Parcelable

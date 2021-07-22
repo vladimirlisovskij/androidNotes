@@ -33,9 +33,11 @@ class DataSourceImpl @Inject constructor(
     override fun deleteImageById(noteID: List<Long>): Completable {
         return Completable.fromAction {
             noteID.forEach {
-                employeeDao.getById(it)?.image?.let {
-                    with(File(directory, it)) {
-                        if(exists()) delete()
+                employeeDao.getById(it)?.image?.let { list ->
+                    list.forEach { url ->
+                        with(File(directory, url)) {
+                            if(exists()) delete()
+                        }
                     }
                 }
             }
@@ -69,6 +71,29 @@ class DataSourceImpl @Inject constructor(
     override fun loadImage(key: String): Single<Bitmap> {
         return Single.fromCallable {
             BitmapFactory.decodeStream(FileInputStream(File(directory, key)))
+        }
+    }
+
+    override fun multiLoadImage(key: List<String>): Single<List<Bitmap>> {
+        return Single.fromCallable{
+            key.map {
+                BitmapFactory.decodeStream(FileInputStream(File(directory, it)))
+            }
+        }
+    }
+
+    override fun multiSaveImage(keys: List<Bitmap>): Single<List<String>> {
+        return Single.fromCallable {
+            keys.map {
+                val key = Date().time.toString()
+                val fos = FileOutputStream(File(directory, key))
+                try {
+                    it.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                } catch (e: Exception) {
+                    fos.close()
+                }
+                return@map key
+            }
         }
     }
 }

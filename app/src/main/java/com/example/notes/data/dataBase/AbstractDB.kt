@@ -1,12 +1,12 @@
 package com.example.notes.data.dataBase
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 import com.example.notes.data.dataBase.entity.Employee
+import com.example.notes.data.dataBase.entity.ListStringConverter
 
 @Database(entities = [Employee::class], version = 1)
+@TypeConverters(ListStringConverter::class)
 abstract class AbstractDB: RoomDatabase() {
     abstract fun employeeDAO(): EmployeeDao
 

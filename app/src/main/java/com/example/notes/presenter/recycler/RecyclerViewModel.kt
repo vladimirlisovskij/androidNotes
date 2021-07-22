@@ -10,8 +10,6 @@ import com.example.notes.presenter.coordinator.Coordinator
 import com.example.notes.presenter.coordinator.OnBackCollector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.entities.toPresentation
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class RecyclerViewModel @Inject constructor(
@@ -42,20 +40,12 @@ class RecyclerViewModel @Inject constructor(
     }
 
     override fun onResume() {
-        disposable += getNotesUseCase()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(
-                { notes ->
-                    Log.d("tag", "getNotes OK")
-                    mutableNoteList.postValue(notes.map {
-                        it.toPresentation()
-                    })
-                },
-                {
-                    Log.d("tag", "error on getNotes $it.toString()")
-                }
-            )
+        getNotesUseCase().simpleSingleSubscribe { notes ->
+            Log.d("tag", "getNotes OK")
+            mutableNoteList.postValue(notes.map {
+                it.toPresentation()
+            })
+        }
     }
 
     fun onAddNoteClick() {
@@ -64,7 +54,7 @@ class RecyclerViewModel @Inject constructor(
             header="",
             desc="",
             body="",
-            image="",
+            image= listOf(),
             creationDate="",
             lastEditDate=""
         ))
@@ -87,20 +77,11 @@ class RecyclerViewModel @Inject constructor(
     fun onDeleteClick(listNotes: List<NoteRecyclerHolder>) {
         isSelected = false
         mutableSelectedMode.postValue(false)
-        disposable += delNoteUseCase(listNotes.map { it.id })
-            .andThen(getNotesUseCase())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(
-                { notes ->
-                    Log.d("tag", "getNotes OK")
-                    mutableNoteList.postValue(notes.map {
-                        it.toPresentation()
-                    })
-                },
-                {
-                    Log.d("tag", "error on getNotes $it.toString()")
-                }
-            )
+        delNoteUseCase(listNotes.map { it.id }).andThen(getNotesUseCase()).simpleSingleSubscribe { notes ->
+            Log.d("tag", "getNotes OK")
+            mutableNoteList.postValue(notes.map {
+                it.toPresentation()
+            })
+        }
     }
 }
