@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.notes.R
 import com.example.notes.base.BaseView
+import com.example.notes.base.ResultFragment
 import com.example.notes.databinding.FragGaleryRecyclerBinding
 import com.example.notes.di.Injector
 import com.example.notes.presenter.gallery.GalleryAdapter
@@ -22,7 +23,9 @@ import javax.inject.Inject
 
 const val ARG_REFS = "ARG_REFS"
 
-class GalleryView: BaseView<GalleryViewModel>(R.layout.frag_galery_recycler) {
+class GalleryView
+    : ResultFragment<GalleryViewModel>(R.layout.frag_galery_recycler)
+{
     companion object {
         fun newInstance(refs: List<String>) = GalleryView().apply {
             arguments = Bundle().apply {

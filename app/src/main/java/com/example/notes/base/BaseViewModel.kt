@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -25,13 +26,19 @@ abstract class BaseViewModel: ViewModel() {
         compositeDisposable.add(this)
     }
 
-    protected fun <T> Single<T>.makeAsync(): Single<T> =
+    protected fun <T> Observable<T>.simpleObservableSubscribe(onSuccess: Consumer<T>) {
         this.observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
-
+            .doOnError {
+                Log.d("tag", it.toString())
+            }
+            .subscribe(onSuccess)
+            .addToComposite()
+    }
 
     protected fun <T> Single<T>.simpleSingleSubscribe(onSuccess: Consumer<T>) {
-        this.makeAsync()
+        this.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
             .doOnError {
                 Log.d("tag", it.toString())
             }

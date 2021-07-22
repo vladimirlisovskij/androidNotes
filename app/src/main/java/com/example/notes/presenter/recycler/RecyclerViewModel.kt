@@ -4,15 +4,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.notes.base.BaseViewModel
+import com.example.notes.domain.useCases.AddNoteUseCase
 import com.example.notes.domain.useCases.DelNoteUseCase
 import com.example.notes.domain.useCases.GetNotesUseCase
 import com.example.notes.presenter.coordinator.Coordinator
 import com.example.notes.presenter.coordinator.OnBackCollector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
+import com.example.notes.presenter.entities.toDomain
 import com.example.notes.presenter.entities.toPresentation
+import com.example.notes.view.noteEdit.NoteEditView
 import javax.inject.Inject
 
 class RecyclerViewModel @Inject constructor(
+    private val addNoteUseCase: AddNoteUseCase,
     private val getNotesUseCase: GetNotesUseCase,
     private val delNoteUseCase: DelNoteUseCase,
     private val coordinator: Coordinator,
@@ -40,28 +44,42 @@ class RecyclerViewModel @Inject constructor(
     }
 
     override fun onResume() {
-        getNotesUseCase().simpleSingleSubscribe { notes ->
-            Log.d("tag", "getNotes OK")
-            mutableNoteList.postValue(notes.map {
-                it.toPresentation()
-            })
-        }
+        getNotes()
     }
 
     fun onAddNoteClick() {
-        coordinator.openNoteEditor(NoteRecyclerHolder(
-            id=0,
-            header="",
-            desc="",
-            body="",
-            image= listOf(),
-            creationDate="",
-            lastEditDate=""
-        ))
+        coordinator.startForResult(
+            NoteEditView.newInstance(NoteRecyclerHolder(
+                id=0,
+                header="",
+                desc="",
+                body="",
+                image= listOf(),
+                creationDate="",
+                lastEditDate=""
+            ))
+        ).simpleObservableSubscribe{
+            (it as? NoteRecyclerHolder)?.let { note ->
+                addNoteUseCase(note.toDomain())
+                    .toSingle { }
+                    .simpleSingleSubscribe {
+                        getNotes()
+                    }
+            }
+        }
     }
 
     fun onItemClick(noteRecyclerHolder: NoteRecyclerHolder) {
-        coordinator.openNoteEditor(noteRecyclerHolder)
+        coordinator.startForResult(NoteEditView.newInstance(noteRecyclerHolder))
+            .simpleObservableSubscribe{
+            (it as? NoteRecyclerHolder)?.let { note ->
+                addNoteUseCase(note.toDomain())
+                    .toSingle { }
+                    .simpleSingleSubscribe {
+                        getNotes()
+                    }
+            }
+        }
     }
 
     fun onLongTab() {
@@ -78,6 +96,15 @@ class RecyclerViewModel @Inject constructor(
         isSelected = false
         mutableSelectedMode.postValue(false)
         delNoteUseCase(listNotes.map { it.id }).andThen(getNotesUseCase()).simpleSingleSubscribe { notes ->
+            Log.d("tag", "getNotes OK")
+            mutableNoteList.postValue(notes.map {
+                it.toPresentation()
+            })
+        }
+    }
+
+    private fun getNotes() {
+        getNotesUseCase().simpleSingleSubscribe { notes ->
             Log.d("tag", "getNotes OK")
             mutableNoteList.postValue(notes.map {
                 it.toPresentation()

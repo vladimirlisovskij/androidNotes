@@ -16,6 +16,8 @@ import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
 import com.example.notes.R
 import com.example.notes.base.BaseView
+import com.example.notes.base.ResultFragment
+import com.example.notes.base.ResultViewModel
 import com.example.notes.databinding.FragNoteEditBinding
 import com.example.notes.di.Injector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
@@ -25,7 +27,7 @@ import javax.inject.Inject
 
 private const val ARG_HOLDER = "ARG_HOLDER"
 
-class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
+class NoteEditView: ResultFragment<NoteViewModel>(R.layout.frag_note_edit) {
     companion object {
         fun newInstance(noteRecyclerHolder: NoteRecyclerHolder) = NoteEditView().apply {
             arguments = Bundle().apply {
@@ -121,11 +123,6 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                         }
                     }
                 }
-                true
-            }
-
-            R.id.action_delete_note -> {
-                viewModel.onDelClick(noteID)
                 true
             }
 

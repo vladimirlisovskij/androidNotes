@@ -9,9 +9,7 @@ import javax.inject.Inject
 class Repository @Inject constructor(
     private val dataSource: DataSource
 ) {
-    fun addNote(noteEntity: NoteEntity): Completable{
-        return Completable.fromSingle(dataSource.addNote(noteEntity))
-    }
+    fun addNote(noteEntity: NoteEntity): Completable = Completable.fromSingle(dataSource.addNote(noteEntity))
 
     fun getNotes() = dataSource.getNotes()
 

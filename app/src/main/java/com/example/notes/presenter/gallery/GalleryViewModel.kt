@@ -8,10 +8,9 @@ import android.os.Parcelable
 import androidx.activity.result.ActivityResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.notes.base.BaseViewModel
+import com.example.notes.base.ResultViewModel
 import com.example.notes.domain.useCases.LoadImageUseCase
 import com.example.notes.presenter.coordinator.Coordinator
-import com.example.notes.presenter.coordinator.FragmentResultEmitter
 import com.example.notes.presenter.coordinator.OnBackCollector
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
@@ -19,9 +18,8 @@ import javax.inject.Inject
 class GalleryViewModel @Inject constructor(
     private val coordinator: Coordinator,
     private val onBackCollector: OnBackCollector,
-    private val fileUseCase: LoadImageUseCase,
-    private val fragmentResultEmitter: FragmentResultEmitter
-): BaseViewModel() {
+    private val fileUseCase: LoadImageUseCase
+): ResultViewModel() {
     @Parcelize
     data class GalleryResult(
         val links: List<String>
@@ -81,7 +79,7 @@ class GalleryViewModel @Inject constructor(
     fun onApplyClick(bitmaps: List<Bitmap>) {
         mutableShowProgress.postValue(true)
         fileUseCase.multiSaveImage(bitmaps).simpleSingleSubscribe {
-            fragmentResultEmitter.sendResult(GalleryResult(it))
+            mutableSetResult.postValue(GalleryResult(it))
             mutableShowProgress.postValue(false)
             coordinator.back()
         }

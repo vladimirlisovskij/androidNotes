@@ -33,11 +33,9 @@ class DataSourceImpl @Inject constructor(
     override fun deleteImageById(noteID: List<Long>): Completable {
         return Completable.fromAction {
             noteID.forEach {
-                employeeDao.getById(it)?.image?.let { list ->
-                    list.forEach { url ->
-                        with(File(directory, url)) {
-                            if(exists()) delete()
-                        }
+                employeeDao.getById(it)?.image?.forEach { name ->
+                    with(File(directory, name)) {
+                        if(exists()) delete()
                     }
                 }
             }
