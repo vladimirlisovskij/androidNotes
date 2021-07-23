@@ -48,8 +48,8 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun onAddNoteClick() {
-        coordinator.startForResult(
-            NoteEditView.newInstance(NoteRecyclerHolder(
+        coordinator.startNoteEdit(
+            NoteRecyclerHolder(
                 id=0,
                 header="",
                 desc="",
@@ -57,7 +57,7 @@ class RecyclerViewModel @Inject constructor(
                 image= listOf(),
                 creationDate="",
                 lastEditDate=""
-            ))
+            )
         ).simpleObservableSubscribe{
             (it as? NoteRecyclerHolder)?.let { note ->
                 addNoteUseCase(note.toDomain())
@@ -70,7 +70,7 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun onItemClick(noteRecyclerHolder: NoteRecyclerHolder) {
-        coordinator.startForResult(NoteEditView.newInstance(noteRecyclerHolder))
+        coordinator.startNoteEdit(noteRecyclerHolder)
             .simpleObservableSubscribe{
             (it as? NoteRecyclerHolder)?.let { note ->
                 addNoteUseCase(note.toDomain())

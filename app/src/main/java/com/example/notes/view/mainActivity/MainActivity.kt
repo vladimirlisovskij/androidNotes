@@ -31,12 +31,12 @@ class MainActivity
             currentFragment: Fragment?,
             nextFragment: Fragment
         ) {
-            fragmentTransaction.setCustomAnimations(
-                R.anim.slide_in,
-                R.anim.fade_in,
-                R.anim.fade_out,
-                R.anim.slide_out
-            )
+//            fragmentTransaction.setCustomAnimations(
+//                R.anim.slide_in,
+//                R.anim.fade_in,
+//                R.anim.fade_out,
+//                R.anim.slide_out
+//            )
         }
     }
 

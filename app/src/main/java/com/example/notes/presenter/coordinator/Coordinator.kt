@@ -3,6 +3,10 @@ package com.example.notes.presenter.coordinator
 import android.os.Parcelable
 import com.example.notes.base.ResultFragment
 import com.example.notes.base.ResultViewModel
+import com.example.notes.presenter.entities.NoteRecyclerHolder
+import com.example.notes.view.editor.EditorView
+import com.example.notes.view.gallery.GalleryView
+import com.example.notes.view.noteEdit.NoteEditView
 import com.example.notes.view.recycler.ListNotesView
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.FragmentScreen
@@ -27,5 +31,7 @@ class Coordinator @Inject constructor(
         router.navigateTo(FragmentScreen{ fragment })
         return publishSubject
     }
+
+    fun startNoteEdit(noteRecyclerHolder: NoteRecyclerHolder) = startForResult(EditorView.newInstance(noteRecyclerHolder))
 }
 

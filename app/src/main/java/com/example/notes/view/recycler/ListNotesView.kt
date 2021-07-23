@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notes.R
@@ -14,6 +15,10 @@ import com.example.notes.di.Injector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.recycler.NoteRecyclerAdapter
 import com.example.notes.presenter.recycler.RecyclerViewModel
+import com.labo.kaji.fragmentanimations.CubeAnimation
+import com.labo.kaji.fragmentanimations.FlipAnimation
+import com.labo.kaji.fragmentanimations.MoveAnimation
+import com.labo.kaji.fragmentanimations.PushPullAnimation
 import javax.inject.Inject
 
 class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {

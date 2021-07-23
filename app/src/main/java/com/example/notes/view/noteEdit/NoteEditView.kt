@@ -3,31 +3,30 @@ package com.example.notes.view.noteEdit
 import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
 import com.example.notes.R
 import com.example.notes.base.BaseView
-import com.example.notes.base.ResultFragment
-import com.example.notes.base.ResultViewModel
 import com.example.notes.databinding.FragNoteEditBinding
 import com.example.notes.di.Injector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import com.example.notes.presenter.noteEdit.NoteViewModel
+import com.example.notes.view.editor.EditorView
+import com.labo.kaji.fragmentanimations.CubeAnimation
+import com.labo.kaji.fragmentanimations.MoveAnimation
 import org.joda.time.DateTime
 import javax.inject.Inject
 
 private const val ARG_HOLDER = "ARG_HOLDER"
 
-class NoteEditView: ResultFragment<NoteViewModel>(R.layout.frag_note_edit) {
+class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     companion object {
         fun newInstance(noteRecyclerHolder: NoteRecyclerHolder) = NoteEditView().apply {
             arguments = Bundle().apply {
@@ -76,11 +75,6 @@ class NoteEditView: ResultFragment<NoteViewModel>(R.layout.frag_note_edit) {
                 creationDate = it.creationDate
                 oldKey=it.image
             }
-
-            image.setOnClickListener {
-                viewModel.onOpenImage(oldKey)
-            }
-
         }
 
         viewModel.hideKeyboard.observe(viewLifecycleOwner) {
@@ -88,8 +82,12 @@ class NoteEditView: ResultFragment<NoteViewModel>(R.layout.frag_note_edit) {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
-        viewModel.listRefs.observe(viewLifecycleOwner) {
-            oldKey = it
+        viewModel.goBack.observe(viewLifecycleOwner) {
+            (parentFragment as? EditorView)?.onEditorBack()
+        }
+
+        viewModel.result.observe(viewLifecycleOwner) {
+            (parentFragment as? EditorView)?.saveNote(it)
         }
     }
 

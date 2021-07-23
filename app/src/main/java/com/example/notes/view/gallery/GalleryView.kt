@@ -7,24 +7,25 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.Animation
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.notes.R
 import com.example.notes.base.BaseView
-import com.example.notes.base.ResultFragment
 import com.example.notes.databinding.FragGaleryRecyclerBinding
 import com.example.notes.di.Injector
 import com.example.notes.presenter.gallery.GalleryAdapter
 import com.example.notes.presenter.gallery.GalleryViewModel
-import com.example.notes.presenter.recycler.NoteRecyclerAdapter
+import com.example.notes.view.editor.EditorView
+import com.labo.kaji.fragmentanimations.CubeAnimation
+import com.labo.kaji.fragmentanimations.MoveAnimation
 import javax.inject.Inject
 
 const val ARG_REFS = "ARG_REFS"
 
 class GalleryView
-    : ResultFragment<GalleryViewModel>(R.layout.frag_galery_recycler)
+    : BaseView<GalleryViewModel>(R.layout.frag_galery_recycler)
 {
     companion object {
         fun newInstance(refs: List<String>) = GalleryView().apply {
@@ -131,6 +132,18 @@ class GalleryView
                     binding.noteEditProgressBar.visibility = View.GONE
                 }
             }
+        }
+
+        viewModel.onBack.observe(viewLifecycleOwner) {
+            (parentFragment as? EditorView)?.onGalleryBack()
+        }
+
+        viewModel.setResult.observe(viewLifecycleOwner) {
+            (parentFragment as? EditorView)?.setImages(it)
+        }
+
+        viewModel.galleryOpen.observe(viewLifecycleOwner) {
+            (parentFragment as? EditorView)?.isGalleryOpen(it)
         }
     }
 

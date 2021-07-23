@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -29,6 +28,6 @@ abstract class ResultFragment<T: ResultViewModel>(
 }
 
 abstract class  ResultViewModel: BaseViewModel() {
-    protected val mutableSetResult = MutableLiveData<Parcelable>()
-    val setResult: LiveData<Parcelable> = mutableSetResult
+    protected val _setResult = MutableLiveData<Parcelable>()
+    val setResult get() = _setResult as LiveData<Parcelable>
 }

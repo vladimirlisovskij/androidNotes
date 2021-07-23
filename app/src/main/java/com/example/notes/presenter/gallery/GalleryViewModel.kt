@@ -4,86 +4,82 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Parcelable
 import androidx.activity.result.ActivityResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.notes.base.ResultViewModel
+import com.example.notes.base.BaseViewModel
 import com.example.notes.domain.useCases.LoadImageUseCase
-import com.example.notes.presenter.coordinator.Coordinator
-import com.example.notes.presenter.coordinator.OnBackCollector
-import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 class GalleryViewModel @Inject constructor(
-    private val coordinator: Coordinator,
-    private val onBackCollector: OnBackCollector,
     private val fileUseCase: LoadImageUseCase
-): ResultViewModel() {
-    @Parcelize
-    data class GalleryResult(
-        val links: List<String>
-    ) : Parcelable
+): BaseViewModel() {
+    private val _selectionMode = MutableLiveData<Boolean>()
+    val selectionMode get() = _selectionMode as LiveData<Boolean>
 
-    private val mutableSelectedMode = MutableLiveData<Boolean>()
-    val selectionMode: LiveData<Boolean> = mutableSelectedMode
+    private val _openImage = MutableLiveData<Bitmap?>()
+    val openImage get() = _openImage as LiveData<Bitmap?>
 
-    private val mutableOpenImage = MutableLiveData<Bitmap?>()
-    val openImage: LiveData<Bitmap?> = mutableOpenImage
+    private val _showProgress = MutableLiveData<Boolean>()
+    val showProgress get() = _showProgress as LiveData<Boolean>
 
-    private val mutableShowProgress = MutableLiveData<Boolean>()
-    val showProgress: LiveData<Boolean> = mutableShowProgress
+    private val _bitmapList = MutableLiveData<List<Bitmap>>()
+    val bitmapList get() = _bitmapList as LiveData<List<Bitmap>>
 
-    private val mutableBitmapList = MutableLiveData<List<Bitmap>>()
-    val bitmapList: LiveData<List<Bitmap>> = mutableBitmapList
+    private val _imageIntent = MutableLiveData<Intent>()
+    val imageIntent get() = _imageIntent as LiveData<Intent>
 
-    private val mutableImageIntent = MutableLiveData<Intent>()
-    val imageIntent: LiveData<Intent> = mutableImageIntent
+    private val _imageUri = MutableLiveData<Uri>()
+    val imageUri get() = _imageUri as LiveData<Uri>
 
-    private val mutableImageUri = MutableLiveData<Uri>()
-    val imageUri: LiveData<Uri> = mutableImageUri
+    private val _onBack = MutableLiveData<Unit>()
+    val onBack get() = _onBack as LiveData<Unit>
+
+    private val _setResult = MutableLiveData<List<String>>()
+    val setResult get() = _setResult as LiveData<List<String>>
+
+    private val _galleryIsOpen = MutableLiveData<Boolean>()
+    val galleryOpen get() = _galleryIsOpen as LiveData<Boolean>
+
+    override fun onCreateView() {
+        super.onCreateView()
+        _galleryIsOpen.postValue(true)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _galleryIsOpen.postValue(false)
+    }
 
     private var isSelected = false
     private var isOpenImage = false
 
-    override fun onCreate() {
-        super.onCreate()
-        onBackCollector.subscribe {
-            onBackClick()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        onBackCollector.disposeLastSubscription()
-    }
-
     fun getBitmaps(refs: List<String>) {
-        mutableShowProgress.postValue(true)
+        _showProgress.postValue(true)
         fileUseCase.multiLoadImage(refs).simpleSingleSubscribe {
-            mutableBitmapList.postValue(it)
-            mutableShowProgress.postValue(false)
+            _bitmapList.postValue(it)
+            _showProgress.postValue(false)
         }
     }
 
     fun onActivityResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let {
-                mutableImageUri.postValue(it)
+                _imageUri.postValue(it)
             }
         }
     }
 
     fun onImageAdd() {
-        mutableImageIntent.postValue(Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+        _imageIntent.postValue(Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
     }
 
     fun onApplyClick(bitmaps: List<Bitmap>) {
-        mutableShowProgress.postValue(true)
+        _showProgress.postValue(true)
         fileUseCase.multiSaveImage(bitmaps).simpleSingleSubscribe {
-            mutableSetResult.postValue(GalleryResult(it))
-            mutableShowProgress.postValue(false)
-            coordinator.back()
+            _setResult.postValue(it)
+            _showProgress.postValue(false)
+            _onBack.postValue(Unit)
         }
     }
 
@@ -91,31 +87,30 @@ class GalleryViewModel @Inject constructor(
         when {
             isOpenImage -> {
                 isOpenImage = false
-                mutableOpenImage.postValue(null)
+                _openImage.postValue(null)
             }
             isSelected -> {
                 isSelected = false
-                mutableSelectedMode.postValue(false)
+                _selectionMode.postValue(false)
             }
             else -> {
-                coordinator.back()
+                _onBack.postValue(Unit)
             }
         }
     }
 
     fun onLongTab() {
-        mutableSelectedMode.postValue(true)
+        _selectionMode.postValue(true)
         isSelected = true
     }
 
     fun onDel() {
-        mutableSelectedMode.postValue(false)
+        _selectionMode.postValue(false)
         isSelected = false
     }
 
-
     fun onItemClick(image: Bitmap) {
         isOpenImage = true
-        mutableOpenImage.postValue(image)
+        _openImage.postValue(image)
     }
 }
