@@ -53,6 +53,10 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
         _binding = FragNoteEditBinding.inflate(inflater)
 
         with(binding) {
+            tbNoteEdit.setNavigationIcon(R.drawable.ic_back)
+            tbNoteEdit.setNavigationOnClickListener {
+                viewModel.exit()
+            }
             tbNoteEdit.inflateMenu(R.menu.menu_editor)
             tbNoteEdit.setOnMenuItemClickListener{ item ->
                 when(item.itemId) {
@@ -86,11 +90,6 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                         }
                         true
                     }
-
-//                    android.R.id.home -> {
-//                        viewModel.onCancelClick()
-//                        true
-//                    }
 
                     else -> false
                 }

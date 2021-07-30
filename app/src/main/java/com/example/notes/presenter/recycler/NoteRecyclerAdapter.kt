@@ -1,5 +1,6 @@
 package com.example.notes.presenter.recycler
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +24,7 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
                         tvHeader.text = it.header
                         tvBody.text = it.desc
                         tvCreationDate.text=itemView.resources.getString(R.string.created, it.creationDate)
-                        tvLastEditDate.text=itemView.resources.getString(R.string.created, it.lastEditDate)
+                        tvLastEditDate.text=itemView.resources.getString(R.string.edited, it.lastEditDate)
                     }
                 }
             }
@@ -58,7 +59,7 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
                             isSelected = !isSelected
                         } else {
                             isSelected = true
-                            recyclerViewModel?.onLongTab()
+                            longTabListener?.invoke()
                         }
                     }
                     true
@@ -67,7 +68,7 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
                     if (isSelectedMode) {
                         isSelected = !isSelected
                     } else {
-                        note?.let { recyclerViewModel?.onItemClick(it) }
+                        note?.let { tabListener?.invoke(it) }
                     }
                 }
             }
@@ -76,7 +77,8 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
 
     var isSelectedMode = false
 
-    var recyclerViewModel: RecyclerViewModel? = null
+    var longTabListener: (() -> Unit)? = null
+    var tabListener: ((NoteRecyclerHolder) -> Unit)? = null
 
     var notesList: List<NoteRecyclerHolder>? = null
         set (dataFormContainerList) {

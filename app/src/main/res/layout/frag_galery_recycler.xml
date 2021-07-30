@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_item_recycler"
-    android:id="@+id/constraint">
+    android:id="@+id/constraint"
+    android:background="@drawable/bg_gallery">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarGallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#00FFFFFF"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerGallery"

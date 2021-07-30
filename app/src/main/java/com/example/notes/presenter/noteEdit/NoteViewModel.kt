@@ -21,7 +21,7 @@ class NoteViewModel @Inject constructor(): BaseViewModel()  {
         exit()
     }
 
-    private fun exit() {
+    fun exit() {
         _hideKeyboard.postValue(Unit)
         _goBack.postValue(Unit)
     }

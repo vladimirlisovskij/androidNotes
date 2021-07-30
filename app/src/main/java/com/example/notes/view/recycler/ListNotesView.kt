@@ -42,6 +42,9 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
 
         with(binding) {
             toolbar.inflateMenu(R.menu.menu_recycler)
+            toolbar.setNavigationOnClickListener {
+                viewModel.onNavigationBack()
+            }
             toolbar.setOnMenuItemClickListener { item ->
                 when(item.itemId) {
                     R.id.action_add_note -> {
@@ -56,11 +59,6 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
                         }
                         true
                     }
-
-//                    android.R.id.home -> {
-//                        viewModel.onNavigationBack()
-//                        true
-//                    }
 
                     R.id.action_del_notes -> {
                         viewModel.onDeleteClick(mutableListOf<NoteRecyclerHolder>().apply {
@@ -84,16 +82,19 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
             menu.findItem(R.id.action_del_notes).isVisible = false
             menu.findItem(R.id.action_select_all).isVisible = false
 
-            adapter.recyclerViewModel = viewModel
+            adapter.longTabListener = this@ListNotesView::onLongTab
+            adapter.tabListener = this@ListNotesView::onTab
             recycler.layoutManager = LinearLayoutManager(context).apply { orientation=LinearLayoutManager.VERTICAL }
             recycler.adapter = adapter
         }
 
         viewModel.selectedMode.observe(viewLifecycleOwner) {
-//            (activity as AppCompatActivity).apply {
-//                supportActionBar?.setDisplayHomeAsUpEnabled(it)
-//                supportActionBar?.setDisplayShowHomeEnabled(it)
-//            }
+            if (it == true) {
+                binding.toolbar.setNavigationIcon(R.drawable.ic_back)
+            } else {
+                binding.toolbar.navigationIcon = null
+            }
+
             menu.findItem(R.id.action_del_notes).isVisible = it
             menu.findItem(R.id.action_select_all).isVisible = it
             menu.findItem(R.id.action_add_note).isVisible = !it
@@ -117,5 +118,13 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun onLongTab() {
+        viewModel.onLongTab()
+    }
+
+    private fun onTab(noteRecyclerHolder: NoteRecyclerHolder) {
+        viewModel.onItemClick(noteRecyclerHolder)
     }
 }

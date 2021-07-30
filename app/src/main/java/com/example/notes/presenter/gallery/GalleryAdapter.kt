@@ -1,12 +1,13 @@
 package com.example.notes.presenter.gallery
 
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.request.RequestOptions
 import com.example.notes.R
 import com.example.notes.databinding.ItemGalleryBinding
 import javax.inject.Inject
@@ -20,7 +21,9 @@ class GalleryAdapter @Inject constructor(): RecyclerView.Adapter<GalleryAdapter.
                 field = value
                 Glide.with(itemView)
                     .load(field)
-                    .centerCrop()
+                    .apply(RequestOptions().apply {
+                        transform(CenterCrop())
+                    })
                     .into(binding.imageView)
             }
 
@@ -44,7 +47,7 @@ class GalleryAdapter @Inject constructor(): RecyclerView.Adapter<GalleryAdapter.
                         isSelected = !isSelected
                     } else {
                         isSelected = true
-                        galleryViewModel?.onLongTab()
+                        longTabListener?.invoke()
                     }
                     true
                 }
@@ -53,14 +56,15 @@ class GalleryAdapter @Inject constructor(): RecyclerView.Adapter<GalleryAdapter.
                     if (isAdapterSelectedMode) {
                         isSelected = !isSelected
                     } else {
-                        image?.let { galleryViewModel?.onItemClick(it) }
+                        image?.let { tabListener?.invoke(it) }
                     }
                 }
             }
         }
     }
 
-    var galleryViewModel: GalleryViewModel? = null
+    var longTabListener: (() -> Unit)? = null
+    var tabListener: ((Bitmap) -> Unit)? = null
 
     var isAdapterSelectedMode = false
 

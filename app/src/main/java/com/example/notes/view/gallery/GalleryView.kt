@@ -57,6 +57,10 @@ class GalleryView
 
         with(binding) {
             toolbarGallery.inflateMenu(R.menu.menu_gallery)
+            toolbarGallery.setNavigationIcon(R.drawable.ic_back)
+            toolbarGallery.setNavigationOnClickListener {
+                viewModel.onBackClick()
+            }
             menu = toolbarGallery.menu
             menu.findItem(R.id.action_delete_image).isVisible = false
             menu.findItem(R.id.action_select_images).isVisible = false
@@ -112,7 +116,9 @@ class GalleryView
                 }
             }
 
-            adapter.galleryViewModel = viewModel
+            adapter.longTabListener = this@GalleryView::onLongTab
+            adapter.tabListener = this@GalleryView::onTab
+
             recyclerGallery.layoutManager =  GridLayoutManager(requireContext(), 2)
             recyclerGallery.adapter = adapter
         }
@@ -204,4 +210,12 @@ class GalleryView
             field = value
             viewModel.isOpenState = value
         }
+
+    private fun onLongTab() {
+        viewModel.onLongTab()
+    }
+
+    private fun onTab(bitmap: Bitmap) {
+        viewModel.onItemClick(bitmap)
+    }
 }

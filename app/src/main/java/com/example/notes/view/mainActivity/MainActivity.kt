@@ -16,10 +16,6 @@ import javax.inject.Inject
 class MainActivity
     : AppCompatActivity()
 {
-    private companion object {
-        var firstCreateFlag = false
-    }
-
     @Inject lateinit var viewModel: MainViewModel
     @Inject lateinit var navigatorHolder: NavigatorHolder
     @Inject lateinit var onBackEmitter: OnBackEmitter
@@ -46,9 +42,6 @@ class MainActivity
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (!firstCreateFlag) viewModel.onViewReady()
-        firstCreateFlag = true
     }
 
     override fun onBackPressed() {

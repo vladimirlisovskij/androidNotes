@@ -13,7 +13,9 @@ import com.github.terrakok.cicerone.androidx.FragmentScreen
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class Coordinator @Inject constructor(
     private val router: Router
 ){
