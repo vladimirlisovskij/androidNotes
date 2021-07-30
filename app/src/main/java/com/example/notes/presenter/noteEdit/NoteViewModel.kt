@@ -3,7 +3,6 @@ package com.example.notes.presenter.noteEdit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.notes.base.BaseViewModel
-import com.example.notes.presenter.coordinator.OnBackCollector
 import com.example.notes.presenter.entities.NoteRecyclerHolder
 import javax.inject.Inject
 
@@ -19,10 +18,6 @@ class NoteViewModel @Inject constructor(): BaseViewModel()  {
 
     fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder) {
         _result.postValue(noteRecyclerHolder)
-        exit()
-    }
-
-    fun onCancelClick() {
         exit()
     }
 

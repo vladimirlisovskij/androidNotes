@@ -3,13 +3,11 @@ package com.example.notes.view.gallery
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.LayoutInflater
 import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
-import android.view.animation.Animation
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.notes.R
 import com.example.notes.base.BaseView
@@ -18,8 +16,6 @@ import com.example.notes.di.Injector
 import com.example.notes.presenter.gallery.GalleryAdapter
 import com.example.notes.presenter.gallery.GalleryViewModel
 import com.example.notes.view.editor.EditorView
-import com.labo.kaji.fragmentanimations.CubeAnimation
-import com.labo.kaji.fragmentanimations.MoveAnimation
 import javax.inject.Inject
 
 const val ARG_REFS = "ARG_REFS"
@@ -38,7 +34,8 @@ class GalleryView
     @Inject override lateinit var viewModel: GalleryViewModel
     @Inject lateinit var adapter: GalleryAdapter
 
-    private lateinit var binding: FragGaleryRecyclerBinding
+    private var _binding: FragGaleryRecyclerBinding? = null
+    private val binding get(): FragGaleryRecyclerBinding = _binding!!
     private lateinit var menu: Menu
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         viewModel.onActivityResult(it)
@@ -50,17 +47,69 @@ class GalleryView
         super.onCreate(savedInstanceState)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding = FragGaleryRecyclerBinding.bind(view)
-        setHasOptionsMenu(true)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragGaleryRecyclerBinding.inflate(inflater)
 
         with(binding) {
-            (activity as AppCompatActivity).apply {
-                setSupportActionBar(toolbarGallery)
-                supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                supportActionBar?.setDisplayShowHomeEnabled(true)
-                supportActionBar?.setDisplayShowTitleEnabled(false)
+            toolbarGallery.inflateMenu(R.menu.menu_gallery)
+            menu = toolbarGallery.menu
+            menu.findItem(R.id.action_delete_image).isVisible = false
+            menu.findItem(R.id.action_select_images).isVisible = false
+
+            toolbarGallery.setOnMenuItemClickListener { item ->
+                when(item.itemId) {
+                    R.id.action_apply_gallery -> {
+                        viewModel.onApplyClick(bitmaps)
+                        true
+                    }
+
+                    R.id.action_add_image -> {
+                        viewModel.onImageAdd()
+                        true
+                    }
+
+                    R.id.action_select_images -> {
+                        with(binding) {
+                            for (i in 0 until recyclerGallery.childCount) {
+                                (recyclerGallery.getChildViewHolder(recyclerGallery.getChildAt(i))
+                                        as GalleryAdapter.ImageViewHolder)
+                                    .isSelected = true
+                            }
+                        }
+                        true
+                    }
+
+                    android.R.id.home -> {
+                        viewModel.onBackClick()
+                        true
+                    }
+
+                    R.id.action_delete_image -> {
+                        bitmaps.clear()
+                        with(binding) {
+                            for (i in 0 until recyclerGallery.childCount) {
+                                (recyclerGallery.getChildViewHolder(recyclerGallery.getChildAt(i))
+                                        as GalleryAdapter.ImageViewHolder).let {
+                                    if (!it.isSelected) {
+                                        it.image?.let { image ->
+                                            bitmaps.add(image)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        adapter.bitmapList = bitmaps
+                        viewModel.onDel()
+                        true
+                    }
+
+                    else -> false
+                }
             }
 
             adapter.galleryViewModel = viewModel
@@ -142,66 +191,17 @@ class GalleryView
             (parentFragment as? EditorView)?.setImages(it)
         }
 
-        viewModel.galleryOpen.observe(viewLifecycleOwner) {
-            (parentFragment as? EditorView)?.isGalleryOpen(it)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    var isOpen = false
+        set(value) {
+            field = value
+            viewModel.isOpenState = value
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.action_apply_gallery -> {
-                viewModel.onApplyClick(bitmaps)
-                true
-            }
-
-            R.id.action_add_image -> {
-                viewModel.onImageAdd()
-                true
-            }
-
-            R.id.action_select_images -> {
-                with(binding) {
-                    for (i in 0 until recyclerGallery.childCount) {
-                        (recyclerGallery.getChildViewHolder(recyclerGallery.getChildAt(i))
-                                as GalleryAdapter.ImageViewHolder)
-                            .isSelected = true
-                    }
-                }
-                true
-            }
-
-            android.R.id.home -> {
-                viewModel.onBackClick()
-                true
-            }
-
-            R.id.action_delete_image -> {
-                bitmaps.clear()
-                with(binding) {
-                    for (i in 0 until recyclerGallery.childCount) {
-                        (recyclerGallery.getChildViewHolder(recyclerGallery.getChildAt(i))
-                                as GalleryAdapter.ImageViewHolder).let {
-                            if (!it.isSelected) {
-                                it.image?.let { image ->
-                                    bitmaps.add(image)
-                                }
-                            }
-                        }
-                    }
-                }
-                adapter.bitmapList = bitmaps
-                viewModel.onDel()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_gallery, menu)
-        this.menu = menu
-        menu.findItem(R.id.action_delete_image).isVisible = false
-        menu.findItem(R.id.action_select_images).isVisible = false
-    }
 }

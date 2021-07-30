@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.notes.R
 import com.example.notes.base.ResultFragment
 import com.example.notes.databinding.FragEditorBinding
@@ -71,11 +72,32 @@ class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         _binding = FragEditorBinding.inflate(inflater)
 
         with(binding) {
-            requireActivity()
-                .supportFragmentManager
+
+            motionLayout.setTransitionListener( object: MotionLayout.TransitionListener {
+                override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) { }
+
+                override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) { }
+
+                override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                    when (p1) {
+                        R.id.end -> (childFragmentManager.findFragmentById(galleryFrame.id) as GalleryView).isOpen = true
+                        R.id.start -> (childFragmentManager.findFragmentById(galleryFrame.id) as GalleryView).isOpen = false
+                    }
+                }
+
+                override fun onTransitionTrigger(
+                    p0: MotionLayout?,
+                    p1: Int,
+                    positive: Boolean,
+                    p3: Float
+                ) { }
+
+            })
+            childFragmentManager
                 .beginTransaction()
                 .add(
                     editorFrame.id,
@@ -86,7 +108,7 @@ class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
                 )
                 .add(
                     galleryFrame.id,
-                    GalleryView.newInstance(listOf())
+                    GalleryView.newInstance(holder?.image ?: listOf())
                 )
                 .commit()
         }
@@ -104,5 +126,4 @@ class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
         super.onDestroyView()
         _binding = null
     }
-
 }

@@ -9,10 +9,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.notes.base.BaseViewModel
 import com.example.notes.domain.useCases.LoadImageUseCase
+import com.example.notes.presenter.coordinator.OnBackCollector
 import javax.inject.Inject
 
 class GalleryViewModel @Inject constructor(
-    private val fileUseCase: LoadImageUseCase
+    private val fileUseCase: LoadImageUseCase,
+    private val onBackCollector: OnBackCollector
 ): BaseViewModel() {
     private val _selectionMode = MutableLiveData<Boolean>()
     val selectionMode get() = _selectionMode as LiveData<Boolean>
@@ -37,19 +39,6 @@ class GalleryViewModel @Inject constructor(
 
     private val _setResult = MutableLiveData<List<String>>()
     val setResult get() = _setResult as LiveData<List<String>>
-
-    private val _galleryIsOpen = MutableLiveData<Boolean>()
-    val galleryOpen get() = _galleryIsOpen as LiveData<Boolean>
-
-    override fun onCreateView() {
-        super.onCreateView()
-        _galleryIsOpen.postValue(true)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _galleryIsOpen.postValue(false)
-    }
 
     private var isSelected = false
     private var isOpenImage = false
@@ -113,4 +102,19 @@ class GalleryViewModel @Inject constructor(
         isOpenImage = true
         _openImage.postValue(image)
     }
+
+    var isOpenState = false
+        set(value) {
+            if (field != value) {
+                if (value) {
+                    onBackCollector.subscribe {
+                        onBackClick()
+                    }
+                    _selectionMode.postValue(false)
+                } else {
+                    onBackCollector.disposeLastSubscription()
+                }
+            }
+            field = value
+        }
 }

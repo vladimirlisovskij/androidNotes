@@ -48,6 +48,5 @@ class EditorViewModel @Inject constructor(
 
     fun sendResult(noteRecyclerHolder: NoteRecyclerHolder) {
         _setResult.postValue(noteRecyclerHolder)
-        coordinator.back()
     }
 }

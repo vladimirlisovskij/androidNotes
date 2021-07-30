@@ -12,7 +12,7 @@ class OnBackEmitter(
 }
 
 class OnBackCollector(
-    private val collector: PublishSubject<Unit>
+    collector: PublishSubject<Unit>
 ) {
     private val commandStack = Stack<(() -> Unit)>()
 
@@ -31,8 +31,10 @@ class OnBackCollector(
     }
 }
 
-class OnBackFabric {
-    private val subject = PublishSubject.create<Unit>()
+class OnBackListener(subject: PublishSubject<Unit>) {
+    companion object {
+        fun create() = OnBackListener(PublishSubject.create())
+    }
 
     val emitter = OnBackEmitter(subject)
     val collector = OnBackCollector(subject)
