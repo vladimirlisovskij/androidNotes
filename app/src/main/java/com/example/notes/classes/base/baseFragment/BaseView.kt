@@ -1,4 +1,4 @@
-package com.example.notes.classes.base
+package com.example.notes.classes.base.baseFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

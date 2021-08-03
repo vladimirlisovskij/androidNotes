@@ -9,3 +9,10 @@ data class NoteEntity (
     val creationDate: String,
     val lastEditDate: String
 )
+
+data class WidgetNoteEntity (
+    var id: Long,
+    val header: String,
+    val desc: String,
+    val body: String
+)

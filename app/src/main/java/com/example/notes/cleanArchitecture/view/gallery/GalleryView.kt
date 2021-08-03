@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.notes.R
-import com.example.notes.classes.base.BaseView
+import com.example.notes.classes.base.baseFragment.BaseView
 import com.example.notes.databinding.FragGaleryRecyclerBinding
 import com.example.notes.di.Injector
 import com.example.notes.cleanArchitecture.presenter.gallery.GalleryAdapter

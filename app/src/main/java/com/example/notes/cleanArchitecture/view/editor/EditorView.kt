@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.notes.R
-import com.example.notes.classes.base.ResultFragment
+import com.example.notes.classes.base.baseResultFragment.ResultFragment
 import com.example.notes.databinding.FragEditorBinding
 import com.example.notes.di.Injector
 import com.example.notes.cleanArchitecture.presenter.editor.EditorViewModel
@@ -53,10 +53,6 @@ class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
 
     fun onGalleryBack() {
         viewModel.onGalleryBack()
-    }
-
-    fun isGalleryOpen(value: Boolean) {
-        viewModel.setIsGalleryState(value)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import com.example.notes.R
-import com.example.notes.classes.base.BaseView
+import com.example.notes.classes.base.baseFragment.BaseView
 import com.example.notes.databinding.FragNoteEditBinding
 import com.example.notes.di.Injector
 import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder

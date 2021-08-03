@@ -4,11 +4,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.example.notes.application.MainApplication
-import com.example.notes.cleanArchitecture.data.dataBase.EmployeeDao
-import com.example.notes.cleanArchitecture.data.dataBase.toData
-import com.example.notes.cleanArchitecture.data.dataBase.toDomain
+import com.example.notes.cleanArchitecture.data.dataBase.dao.EmployeeDao
+import com.example.notes.cleanArchitecture.data.dataBase.dao.WidgetNoteDao
+import com.example.notes.cleanArchitecture.data.dataBase.entitie.toData
+import com.example.notes.cleanArchitecture.data.dataBase.entitie.toDomain
 import com.example.notes.cleanArchitecture.domain.dataSource.DataSource
 import com.example.notes.cleanArchitecture.domain.enitites.NoteEntity
+import com.example.notes.cleanArchitecture.domain.enitites.WidgetNoteEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import java.io.File
@@ -16,9 +18,11 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 class DataSourceImpl @Inject constructor(
-    private val employeeDao: EmployeeDao
+    private val employeeDao: EmployeeDao,
+    private val widgetNoteDao: WidgetNoteDao
 ) : DataSource {
     private companion object {
         const val IMAGE_DIR = "imageDir"
@@ -30,9 +34,9 @@ class DataSourceImpl @Inject constructor(
         return employeeDao.insert(noteEntity.toData())
     }
 
-    override fun deleteImageById(noteID: List<Long>): Completable {
+    override fun deleteImageByID(noteIDs: List<Long>): Completable {
         return Completable.fromAction {
-            noteID.forEach {
+            noteIDs.forEach {
                 employeeDao.getById(it)?.image?.forEach { name ->
                     with(File(directory, name)) {
                         if(exists()) delete()
@@ -42,8 +46,32 @@ class DataSourceImpl @Inject constructor(
         }
     }
 
-    override fun deleteNote(noteID: List<Long>): Completable {
-        return employeeDao.deleteByListId(noteID)
+    override fun getWidgetNotesByID(widgetIDs: List<Long>): Single<HashMap<Long, WidgetNoteEntity>> {
+        return Single.fromCallable {
+            val res = HashMap<Long, WidgetNoteEntity>()
+            widgetIDs.forEach { id ->
+                widgetNoteDao.getById(id)?.let { note ->
+                    res[id] = note.toDomain()
+                }
+            }
+            res
+        }
+    }
+
+    override fun insertWidgetNote(note: WidgetNoteEntity): Completable {
+        return Completable.fromCallable {
+            widgetNoteDao.insert(note.toData())
+        }
+    }
+
+    override fun deleteWidgetNoteByID(widgetIDs: List<Long>): Completable {
+        return Completable.fromCallable {
+            widgetIDs.forEach(widgetNoteDao::deleteById)
+        }
+    }
+
+    override fun deleteNote(noteIDs: List<Long>): Completable {
+        return employeeDao.deleteByListId(noteIDs)
     }
 
     override fun getNotes(): Single<List<NoteEntity>> {
@@ -52,9 +80,9 @@ class DataSourceImpl @Inject constructor(
         }
     }
 
-    override fun multiLoadImage(key: List<String>): Single<List<Bitmap>> {
+    override fun multiLoadImage(keys: List<String>): Single<List<Bitmap>> {
         return Single.fromCallable{
-            key.map {
+            keys.map {
                 BitmapFactory.decodeStream(FileInputStream(File(directory, it)))
             }
         }

@@ -2,7 +2,7 @@ package com.example.notes.cleanArchitecture.presenter.editor
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.notes.classes.base.ResultViewModel
+import com.example.notes.classes.base.baseResultFragment.ResultViewModel
 import com.example.notes.classes.coordinator.Coordinator
 import com.example.notes.classes.backCoordinator.OnBackCollector
 import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
@@ -31,10 +31,6 @@ class EditorViewModel @Inject constructor(
     override fun onDestroy() {
         super.onDestroy()
         onBackCollector.disposeLastSubscription()
-    }
-
-    fun setIsGalleryState(value: Boolean) {
-        isGalleryOpen = value
     }
 
     fun onEditorBack() {

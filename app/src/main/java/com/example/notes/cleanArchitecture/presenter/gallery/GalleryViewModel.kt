@@ -7,7 +7,7 @@ import android.net.Uri
 import androidx.activity.result.ActivityResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.notes.classes.base.BaseViewModel
+import com.example.notes.classes.base.baseFragment.BaseViewModel
 import com.example.notes.cleanArchitecture.domain.useCases.LoadImageUseCase
 import com.example.notes.classes.backCoordinator.OnBackCollector
 import javax.inject.Inject

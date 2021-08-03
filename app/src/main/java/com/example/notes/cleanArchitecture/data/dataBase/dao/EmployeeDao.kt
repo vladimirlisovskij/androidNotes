@@ -1,9 +1,10 @@
-package com.example.notes.cleanArchitecture.data.dataBase
+package com.example.notes.cleanArchitecture.data.dataBase.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.notes.cleanArchitecture.data.dataBase.entitie.Employee
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
@@ -21,3 +22,4 @@ interface EmployeeDao {
     @Query("select * from employee where id=:id")
     fun getById(id: Long): Employee?
 }
+

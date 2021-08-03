@@ -1,4 +1,4 @@
-package com.example.notes.cleanArchitecture.data.dataBase
+package com.example.notes.cleanArchitecture.data.dataBase.entitie
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

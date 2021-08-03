@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notes.R
-import com.example.notes.classes.base.BaseView
+import com.example.notes.classes.base.baseFragment.BaseView
 import com.example.notes.databinding.FragRecyclerBinding
 import com.example.notes.di.Injector
 import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder

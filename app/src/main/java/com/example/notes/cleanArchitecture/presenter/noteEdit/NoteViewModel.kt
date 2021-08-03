@@ -2,7 +2,7 @@ package com.example.notes.cleanArchitecture.presenter.noteEdit
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.notes.classes.base.BaseViewModel
+import com.example.notes.classes.base.baseFragment.BaseViewModel
 import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class NoteViewModel @Inject constructor(): BaseViewModel()  {
 
     fun onApplyClick(noteRecyclerHolder: NoteRecyclerHolder) {
         _result.postValue(noteRecyclerHolder)
-        exit()
+        _hideKeyboard.postValue(Unit)
     }
 
     fun exit() {

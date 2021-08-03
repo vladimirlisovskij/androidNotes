@@ -8,4 +8,7 @@ import dagger.Provides
 class DBModule {
     @Provides
     fun provideDao() = AbstractDB.instance.employeeDAO()
+
+    @Provides
+    fun provideWidgetDao() = AbstractDB.instance.widgetNoteDao()
 }

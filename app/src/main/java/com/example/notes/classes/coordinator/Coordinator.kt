@@ -1,8 +1,9 @@
 package com.example.notes.classes.coordinator
 
 import android.os.Parcelable
-import com.example.notes.classes.base.ResultFragment
-import com.example.notes.classes.base.ResultViewModel
+import android.util.Log
+import com.example.notes.classes.base.baseResultFragment.ResultFragment
+import com.example.notes.classes.base.baseResultFragment.ResultViewModel
 import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
 import com.example.notes.cleanArchitecture.view.editor.EditorView
 import com.example.notes.cleanArchitecture.view.recycler.ListNotesView
@@ -25,13 +26,23 @@ class Coordinator @Inject constructor(
         router.newRootScreen(FragmentScreen{ ListNotesView.newInstance() })
     }
 
-    fun <T: ResultViewModel> startForResult(fragment: ResultFragment<T>): Observable<Parcelable> {
+    private fun <T: ResultViewModel> startForResult(fragment: ResultFragment<T>): Observable<Parcelable> {
         val publishSubject = PublishSubject.create<Parcelable>()
         fragment.resultEmitter = publishSubject
         router.navigateTo(FragmentScreen{ fragment })
         return publishSubject
     }
 
+    private fun <T: ResultViewModel> startForResultWithRoot(fragment: ResultFragment<T>): Observable<Parcelable> {
+        Log.d("tag", "start")
+        val publishSubject = PublishSubject.create<Parcelable>()
+        fragment.resultEmitter = publishSubject
+        router.newRootScreen(FragmentScreen{ fragment })
+        return publishSubject
+    }
+
     fun startNoteEdit(noteRecyclerHolder: NoteRecyclerHolder) = startForResult(EditorView.newInstance(noteRecyclerHolder))
+
+    fun startNoteEditWithRoot(noteRecyclerHolder: NoteRecyclerHolder) = startForResultWithRoot(EditorView.newInstance(noteRecyclerHolder))
 }
 

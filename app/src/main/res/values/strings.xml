@@ -99,4 +99,6 @@
     <string name="recycler_addnote">add Note</string>
     <string name="edited">Изменено %1$s</string>
     <string name="created">Создано %1$s</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

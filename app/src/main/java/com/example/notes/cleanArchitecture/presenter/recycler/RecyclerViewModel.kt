@@ -3,7 +3,7 @@ package com.example.notes.cleanArchitecture.presenter.recycler
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.notes.classes.base.BaseViewModel
+import com.example.notes.classes.base.baseFragment.BaseViewModel
 import com.example.notes.cleanArchitecture.domain.useCases.AddNoteUseCase
 import com.example.notes.cleanArchitecture.domain.useCases.DelNoteUseCase
 import com.example.notes.cleanArchitecture.domain.useCases.GetNotesUseCase
@@ -59,6 +59,7 @@ class RecyclerViewModel @Inject constructor(
             )
         ).simpleObservableSubscribe{
             (it as? NoteRecyclerHolder)?.let { note ->
+                coordinator.back()
                 addNoteUseCase(note.toDomain())
                     .toSingle { }
                     .simpleSingleSubscribe {
@@ -72,6 +73,7 @@ class RecyclerViewModel @Inject constructor(
         coordinator.startNoteEdit(noteRecyclerHolder)
             .simpleObservableSubscribe{
             (it as? NoteRecyclerHolder)?.let { note ->
+                coordinator.back()
                 addNoteUseCase(note.toDomain())
                     .toSingle { }
                     .simpleSingleSubscribe {
