@@ -1,14 +1,13 @@
 package com.example.notes.cleanArchitecture.presenter.recycler
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
 import com.example.notes.application.MainApplication
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterNoteEntity
 import com.example.notes.databinding.ItemRecyclerNoteBinding
-import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
 import javax.inject.Inject
 
 class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecyclerAdapter.NoteViewHolder>() {
@@ -16,7 +15,7 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
         private val binding = ItemRecyclerNoteBinding.bind(itemView)
         private val res = MainApplication.instance.resources
 
-        var note: NoteRecyclerHolder? = null
+        var presenterNote: PresenterNoteEntity? = null
             set (dataFormContainerList) {
                 field = dataFormContainerList
                 field?.let {
@@ -54,7 +53,7 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
             isSelected = false
             with(binding) {
                 layout.setOnLongClickListener {
-                    note?.let {
+                    presenterNote?.let {
                         if (isSelectedMode) {
                             isSelected = !isSelected
                         } else {
@@ -68,7 +67,7 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
                     if (isSelectedMode) {
                         isSelected = !isSelected
                     } else {
-                        note?.let { tabListener?.invoke(it) }
+                        presenterNote?.let { tabListener?.invoke(it) }
                     }
                 }
             }
@@ -78,9 +77,9 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
     var isSelectedMode = false
 
     var longTabListener: (() -> Unit)? = null
-    var tabListener: ((NoteRecyclerHolder) -> Unit)? = null
+    var tabListener: ((PresenterNoteEntity) -> Unit)? = null
 
-    var notesList: List<NoteRecyclerHolder>? = null
+    var notesList: List<PresenterNoteEntity>? = null
         set (dataFormContainerList) {
             field = dataFormContainerList
             notifyDataSetChanged()
@@ -93,7 +92,7 @@ class NoteRecyclerAdapter @Inject constructor(): RecyclerView.Adapter<NoteRecycl
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         notesList?.let {
-            holder.note = it[position]
+            holder.presenterNote = it[position]
         }
     }
 

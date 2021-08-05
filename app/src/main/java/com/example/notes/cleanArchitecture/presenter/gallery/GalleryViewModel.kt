@@ -3,19 +3,21 @@ package com.example.notes.cleanArchitecture.presenter.gallery
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.result.ActivityResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.notes.classes.base.baseFragment.BaseViewModel
-import com.example.notes.cleanArchitecture.domain.useCases.LoadImageUseCase
 import com.example.notes.classes.backCoordinator.OnBackCollector
+import com.example.notes.classes.base.baseFragment.BaseViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class GalleryViewModel @Inject constructor(
-    private val fileUseCase: LoadImageUseCase,
     private val onBackCollector: OnBackCollector
-): BaseViewModel() {
+) : BaseViewModel() {
     private val _selectionMode = MutableLiveData<Boolean>()
     val selectionMode get() = _selectionMode as LiveData<Boolean>
 
@@ -37,18 +39,20 @@ class GalleryViewModel @Inject constructor(
     private val _onBack = MutableLiveData<Unit>()
     val onBack get() = _onBack as LiveData<Unit>
 
-    private val _setResult = MutableLiveData<List<String>>()
-    val setResult get() = _setResult as LiveData<List<String>>
+    private val _setResult = MutableLiveData<List<ByteArray>>()
+    val setResult get() = _setResult as LiveData<List<ByteArray>>
 
     private var isSelected = false
     private var isOpenImage = false
 
     fun getBitmaps(refs: List<String>) {
         _showProgress.postValue(true)
-        fileUseCase.multiLoadImage(refs).simpleSingleSubscribe {
-            _bitmapList.postValue(it)
-            _showProgress.postValue(false)
-        }
+        val listType = object : TypeToken<ByteArray>() {}.type
+        _bitmapList.postValue(refs.map {
+            val array: ByteArray = Gson().fromJson(it, listType)
+            BitmapFactory.decodeByteArray(array, 0, array.size)
+        })
+        _showProgress.postValue(false)
     }
 
     fun onActivityResult(result: ActivityResult) {
@@ -60,16 +64,22 @@ class GalleryViewModel @Inject constructor(
     }
 
     fun onImageAdd() {
-        _imageIntent.postValue(Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+        _imageIntent.postValue(
+            Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            )
+        )
     }
 
     fun onApplyClick(bitmaps: List<Bitmap>) {
         _showProgress.postValue(true)
-        fileUseCase.multiSaveImage(bitmaps).simpleSingleSubscribe {
-            _setResult.postValue(it)
-            _showProgress.postValue(false)
-            _onBack.postValue(Unit)
-        }
+        _setResult.postValue(bitmaps.map {
+            val stream = ByteArrayOutputStream()
+            it.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.toByteArray()
+        })
+        _showProgress.postValue(false)
     }
 
     fun onBackClick() {

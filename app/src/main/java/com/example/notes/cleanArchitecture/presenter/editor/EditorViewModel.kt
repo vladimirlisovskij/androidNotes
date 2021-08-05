@@ -2,10 +2,10 @@ package com.example.notes.cleanArchitecture.presenter.editor
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.notes.classes.backCoordinator.OnBackCollector
 import com.example.notes.classes.base.baseResultFragment.ResultViewModel
 import com.example.notes.classes.coordinator.Coordinator
-import com.example.notes.classes.backCoordinator.OnBackCollector
-import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterNoteEntity
 import javax.inject.Inject
 
 class EditorViewModel @Inject constructor(
@@ -41,7 +41,7 @@ class EditorViewModel @Inject constructor(
         _closeGallery.postValue(Unit)
     }
 
-    fun sendResult(noteRecyclerHolder: NoteRecyclerHolder) {
-        _setResult.postValue(noteRecyclerHolder)
+    fun sendResult(presenterNoteEntity: PresenterNoteEntity) {
+        _setResult.postValue(presenterNoteEntity)
     }
 }

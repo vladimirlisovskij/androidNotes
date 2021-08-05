@@ -7,21 +7,21 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.notes.R
 import com.example.notes.classes.base.baseResultFragment.ResultFragment
-import com.example.notes.databinding.FragEditorBinding
-import com.example.notes.di.Injector
 import com.example.notes.cleanArchitecture.presenter.editor.EditorViewModel
-import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterNoteEntity
 import com.example.notes.cleanArchitecture.view.gallery.GalleryView
 import com.example.notes.cleanArchitecture.view.noteEdit.NoteEditView
+import com.example.notes.databinding.FragEditorBinding
+import com.example.notes.di.Injector
 import javax.inject.Inject
 
 private const val ARG_HOLDER = "ARG_HOLDER"
 
 class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
     companion object {
-        fun newInstance(noteRecyclerHolder: NoteRecyclerHolder) = EditorView().apply {
+        fun newInstance(presenterNoteEntity: PresenterNoteEntity) = EditorView().apply {
             arguments = Bundle().apply {
-                putParcelable(ARG_HOLDER, noteRecyclerHolder)
+                putParcelable(ARG_HOLDER, presenterNoteEntity)
             }
         }
 
@@ -32,19 +32,20 @@ class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
 
     private var _binding: FragEditorBinding? = null
     private val binding get() = _binding!!
-    private var holder: NoteRecyclerHolder? = null
+
+    private var entityPresenter: PresenterNoteEntity? = null
 
     fun setImages(list: List<String>) {
-        holder?.apply {
+        entityPresenter?.apply {
             this.image = list
         }
     }
 
-    fun saveNote(noteRecyclerHolder: NoteRecyclerHolder) {
-        holder?.let {
-            noteRecyclerHolder.image = it.image
+    fun saveNote(presenterNoteEntity: PresenterNoteEntity) {
+        entityPresenter?.let {
+            presenterNoteEntity.image = it.image
         }
-        viewModel.sendResult(noteRecyclerHolder)
+        viewModel.sendResult(presenterNoteEntity)
     }
 
     fun onEditorBack() {
@@ -59,7 +60,7 @@ class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
         Injector.component.inject(this)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            holder = it.getParcelable(ARG_HOLDER)
+            entityPresenter = it.getParcelable(ARG_HOLDER)
         }
     }
 
@@ -98,13 +99,13 @@ class EditorView: ResultFragment<EditorViewModel>(R.layout.frag_editor) {
                 .add(
                     editorFrame.id,
                     NoteEditView.newInstance(
-                        holder ?:
-                        NoteRecyclerHolder(0, "", "", "", listOf(), "", "")
+                        entityPresenter ?:
+                        PresenterNoteEntity("", "", "", "", listOf(), "", "")
                     )
                 )
                 .add(
                     galleryFrame.id,
-                    GalleryView.newInstance(holder?.image ?: listOf())
+                    GalleryView.newInstance(entityPresenter?.image ?: listOf())
                 )
                 .commit()
         }

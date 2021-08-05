@@ -6,10 +6,11 @@ import com.example.notes.cleanArchitecture.domain.useCases.GetNotesByWidgetIdUse
 import com.example.notes.cleanArchitecture.presenter.di.PresenterModule
 import com.example.notes.cleanArchitecture.view.editor.EditorView
 import com.example.notes.cleanArchitecture.view.gallery.GalleryView
+import com.example.notes.cleanArchitecture.view.login.LoginView
 import com.example.notes.cleanArchitecture.view.mainActivity.MainActivity
 import com.example.notes.cleanArchitecture.view.noteEdit.NoteEditView
 import com.example.notes.cleanArchitecture.view.recycler.ListNotesView
-import com.example.notes.cleanArchitecture.presenter.widget.NoteWidget
+import com.example.notes.cleanArchitecture.view.signin.SignInView
 import com.example.notes.cleanArchitecture.view.widgetConfigActivity.WidgetConfigActivity
 import dagger.Component
 import javax.inject.Singleton
@@ -24,6 +25,8 @@ interface MainComponent {
     fun inject(target: NoteEditView)
     fun inject(target: GalleryView)
     fun inject(target: EditorView)
+    fun inject(target: LoginView)
+    fun inject(target: SignInView)
 
     fun getNotesByWidgetIdUseCase(): GetNotesByWidgetIdUseCase
     fun deleteWidgetUseCase(): DeleteWidgetNotesByIDsUseCase

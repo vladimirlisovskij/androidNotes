@@ -3,7 +3,8 @@ package com.example.notes.cleanArchitecture.presenter.WidgetConfigActivity
 import com.example.notes.classes.base.baseActivity.BaseActivityViewModel
 import com.example.notes.classes.coordinator.Coordinator
 import com.example.notes.cleanArchitecture.domain.useCases.InsertWidgetNoteUseCase
-import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterNoteEntity
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterWidgetNoteEntity
 import com.example.notes.cleanArchitecture.presenter.entities.toWidgetDomain
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -18,13 +19,13 @@ class WidgetConfigViewModel @Inject constructor(
     private val insertWidgetNoteUseCase: InsertWidgetNoteUseCase
 ): BaseActivityViewModel() {
 
-    private val _resultEmitter = PublishSubject.create<NoteRecyclerHolder>()
-    val resultEmitter get() = _resultEmitter as Observable<NoteRecyclerHolder>
+    private val _resultEmitter = PublishSubject.create<PresenterWidgetNoteEntity>()
+    val resultEmitter get() = _resultEmitter as Observable<PresenterWidgetNoteEntity>
 
     fun onReady(id: Int) {
         coordinator.startNoteEditWithRoot(
-            NoteRecyclerHolder(
-                id=0,
+            PresenterNoteEntity(
+                id="",
                 header="",
                 desc="",
                 body="",
@@ -36,7 +37,7 @@ class WidgetConfigViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe {
-                (it as? NoteRecyclerHolder)?.let { note ->
+                (it as? PresenterWidgetNoteEntity)?.let { note ->
                     _resultEmitter.onNext(note)
                     note.id = id.toLong()
                     insertWidgetNoteUseCase(note.toWidgetDomain())

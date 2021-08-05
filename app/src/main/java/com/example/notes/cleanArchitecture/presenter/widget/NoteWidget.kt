@@ -8,21 +8,20 @@ import androidx.annotation.LayoutRes
 import com.example.notes.R
 import com.example.notes.cleanArchitecture.domain.useCases.DeleteWidgetNotesByIDsUseCase
 import com.example.notes.cleanArchitecture.domain.useCases.GetNotesByWidgetIdUseCase
-import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterWidgetNoteEntity
 import com.example.notes.cleanArchitecture.presenter.entities.toPresentation
 import com.example.notes.di.Injector
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
 
 class  NoteWidget: AppWidgetProvider() {
     companion object {
         @LayoutRes const val LAYOUT_RES = R.layout.note_widget
 
-        fun setViewContent(id: Int, context: Context, note: NoteRecyclerHolder) {
+        fun setViewContent(id: Int, context: Context, notePresenter: PresenterWidgetNoteEntity) {
             val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
             RemoteViews(context.packageName, LAYOUT_RES).also { views ->
-                with(note) {
+                with(notePresenter) {
                     views.setTextViewText(R.id.tv_header, header)
                     views.setTextViewText(R.id.tv_body, body)
                     views.setTextViewText(R.id.tv_title, desc)

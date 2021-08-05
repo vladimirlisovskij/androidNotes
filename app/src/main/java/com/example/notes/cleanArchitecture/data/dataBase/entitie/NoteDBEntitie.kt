@@ -1,40 +1,45 @@
 package com.example.notes.cleanArchitecture.data.dataBase.entitie
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.os.Parcelable
 import com.example.notes.cleanArchitecture.domain.enitites.NoteEntity
+import com.google.firebase.firestore.QueryDocumentSnapshot
+import kotlinx.parcelize.Parcelize
 
-@Entity
-data class Employee(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+@Parcelize
+data class Employee2(
+    val id: String,
     val header: String,
     val desc: String,
     val body: String,
     val image: List<String>,
     val creationDate: String,
     val lastEditDate: String
-)
+) : Parcelable
 
-fun NoteEntity.toData(): Employee {
-    return Employee(
-        id= this.id,
-        header=this.header,
-        desc=this.desc,
-        body=this.body,
-        image=this.image,
-        creationDate=this.creationDate,
-        lastEditDate=this.lastEditDate
+
+fun QueryDocumentSnapshot.toEmployee(): Employee2 {
+    return Employee2(
+        id = id as String,
+        header = this["header"] as String,
+        desc = this["desc"] as String,
+        body = this["body"] as String,
+        image = this["image"] as List<String>,
+        creationDate = this["creationDate"] as String,
+        lastEditDate = this["lastEditDate"] as String,
     )
 }
 
-fun Employee.toDomain(): NoteEntity {
+fun Employee2.toDomain(): NoteEntity {
     return NoteEntity(
-        id=this.id,
-        header=this.header,
-        desc=this.desc,
-        body=this.body,
-        image=this.image,
-        creationDate=this.creationDate,
-        lastEditDate=this.lastEditDate
+        id = id,
+        header = header,
+        desc = desc,
+        body = body,
+        image = image,
+        creationDate = creationDate,
+        lastEditDate = lastEditDate
     )
 }
+
+
+

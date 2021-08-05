@@ -4,7 +4,7 @@ import androidx.room.*
 import com.example.notes.application.MainApplication
 import com.example.notes.cleanArchitecture.data.dataBase.dao.EmployeeDao
 import com.example.notes.cleanArchitecture.data.dataBase.dao.WidgetNoteDao
-import com.example.notes.cleanArchitecture.data.dataBase.entitie.Employee
+import com.example.notes.cleanArchitecture.data.dataBase.entitie.WidgetEmployee
 import com.example.notes.cleanArchitecture.data.dataBase.entitie.NoteEmployee
 import com.google.gson.Gson
 
@@ -16,7 +16,7 @@ class ListStringConverter {
     fun fromList(value: List<String>): String = Gson().toJson(value)
 }
 
-@Database(entities = [Employee::class, NoteEmployee::class], version = 1)
+@Database(entities = [WidgetEmployee::class, NoteEmployee::class], version = 1)
 @TypeConverters(ListStringConverter::class)
 abstract class AbstractDB: RoomDatabase() {
     companion object {

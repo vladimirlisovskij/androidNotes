@@ -1,5 +1,6 @@
 package com.example.notes.cleanArchitecture.view.recycler
 
+import android.content.*
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,12 +9,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notes.R
 import com.example.notes.classes.base.baseFragment.BaseView
-import com.example.notes.databinding.FragRecyclerBinding
-import com.example.notes.di.Injector
-import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
+import com.example.notes.classes.services.ConnectivityStatusService
+import com.example.notes.classes.services.DataBaseUpdateService
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterNoteEntity
 import com.example.notes.cleanArchitecture.presenter.recycler.NoteRecyclerAdapter
 import com.example.notes.cleanArchitecture.presenter.recycler.RecyclerViewModel
+import com.example.notes.databinding.FragRecyclerBinding
+import com.example.notes.di.Injector
 import javax.inject.Inject
+
 
 class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
     companion object {
@@ -25,6 +29,19 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
 
     private var _binding: FragRecyclerBinding? = null
     private val binding get() = _binding!!
+
+    private val connectivityStatusReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            viewModel.setIsOnline(intent.getBooleanExtra(ConnectivityStatusService.STATUS_KEY, false))
+        }
+    }
+
+    private val updateReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            viewModel.getNotes()
+        }
+    }
+
     private lateinit var menu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,17 +78,22 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
                     }
 
                     R.id.action_del_notes -> {
-                        viewModel.onDeleteClick(mutableListOf<NoteRecyclerHolder>().apply {
+                        viewModel.onDeleteClick(mutableListOf<PresenterNoteEntity>().apply {
                             for (i in 0 until binding.recycler.childCount) {
                                 (binding.recycler.getChildViewHolder(binding.recycler.getChildAt(i)) as NoteRecyclerAdapter.NoteViewHolder).let {
                                     if (it.isSelected) {
-                                        it.note?.let { holder ->
+                                        it.presenterNote?.let { holder ->
                                             this.add(holder)
                                         }
                                     }
                                 }
                             }
                         })
+                        true
+                    }
+
+                    R.id.action_signOut -> {
+                        viewModel.onSignOut()
                         true
                     }
 
@@ -98,6 +120,7 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
             menu.findItem(R.id.action_del_notes).isVisible = it
             menu.findItem(R.id.action_select_all).isVisible = it
             menu.findItem(R.id.action_add_note).isVisible = !it
+            menu.findItem(R.id.action_signOut).isVisible = !it
             adapter.isSelectedMode = it
 
             if (it == false) {
@@ -108,7 +131,7 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
             }
         }
 
-        viewModel.noteList.observe(viewLifecycleOwner) {
+        viewModel.presenterNoteList.observe(viewLifecycleOwner) {
             adapter.notesList = it
         }
 
@@ -124,7 +147,19 @@ class ListNotesView: BaseView<RecyclerViewModel>(R.layout.frag_recycler) {
         viewModel.onLongTab()
     }
 
-    private fun onTab(noteRecyclerHolder: NoteRecyclerHolder) {
-        viewModel.onItemClick(noteRecyclerHolder)
+    private fun onTab(presenterNoteEntity: PresenterNoteEntity) {
+        viewModel.onItemClick(presenterNoteEntity)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireContext().registerReceiver(updateReceiver, IntentFilter(DataBaseUpdateService.FILTER_KEY))
+        requireContext().registerReceiver(connectivityStatusReceiver, IntentFilter(ConnectivityStatusService.FILTER_KEY))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(updateReceiver)
+        requireContext().unregisterReceiver(connectivityStatusReceiver)
     }
 }

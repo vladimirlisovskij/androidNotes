@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -25,6 +26,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField   "String", "GCP_CLIENT_ID", '"36384683549-gllmnvla3ng74uski3ca9f3llvq01p9q.apps.googleusercontent.com"'
+        }
+
+        debug {
+            buildConfigField   "String", "GCP_CLIENT_ID", '"36384683549-gllmnvla3ng74uski3ca9f3llvq01p9q.apps.googleusercontent.com"'
         }
     }
     compileOptions {
@@ -52,6 +59,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.viewpager:viewpager:1.0.0'
+    implementation 'com.google.firebase:firebase-database-ktx:20.0.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:23.0.3'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

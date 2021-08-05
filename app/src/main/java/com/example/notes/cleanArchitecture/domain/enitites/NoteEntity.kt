@@ -1,7 +1,7 @@
 package com.example.notes.cleanArchitecture.domain.enitites
 
 data class NoteEntity (
-    var id: Long,
+    var id: String,
     val header: String,
     val desc: String,
     val body: String,

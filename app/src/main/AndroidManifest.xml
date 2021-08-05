@@ -35,6 +35,9 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+
+        <service android:name=".classes.services.ConnectivityStatusService"/>
+        <service android:name=".classes.services.DataBaseUpdateService"/>
     </application>
 
 </manifest>

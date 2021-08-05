@@ -3,7 +3,6 @@ package com.example.notes.cleanArchitecture.view.widgetConfigActivity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import com.example.notes.R
 import com.example.notes.classes.backCoordinator.OnBackEmitter
 import com.example.notes.classes.base.baseActivity.BaseActivity

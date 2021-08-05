@@ -2,6 +2,7 @@ package com.example.notes.cleanArchitecture.view.gallery
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Parcelable
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.Menu
@@ -11,11 +12,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.notes.R
 import com.example.notes.classes.base.baseFragment.BaseView
-import com.example.notes.databinding.FragGaleryRecyclerBinding
-import com.example.notes.di.Injector
+import com.example.notes.cleanArchitecture.presenter.entities.ImageHolder
 import com.example.notes.cleanArchitecture.presenter.gallery.GalleryAdapter
 import com.example.notes.cleanArchitecture.presenter.gallery.GalleryViewModel
 import com.example.notes.cleanArchitecture.view.editor.EditorView
+import com.example.notes.databinding.FragGaleryRecyclerBinding
+import com.example.notes.di.Injector
+import com.google.gson.Gson
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 const val ARG_REFS = "ARG_REFS"
@@ -194,7 +198,9 @@ class GalleryView
         }
 
         viewModel.setResult.observe(viewLifecycleOwner) {
-            (parentFragment as? EditorView)?.setImages(it)
+            (parentFragment as? EditorView)?.setImages(it.map { arr ->
+                Gson().toJson(arr)
+            })
         }
 
         return binding.root

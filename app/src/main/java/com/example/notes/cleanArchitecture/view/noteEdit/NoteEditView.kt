@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import com.example.notes.R
 import com.example.notes.classes.base.baseFragment.BaseView
-import com.example.notes.databinding.FragNoteEditBinding
-import com.example.notes.di.Injector
-import com.example.notes.cleanArchitecture.presenter.entities.NoteRecyclerHolder
+import com.example.notes.cleanArchitecture.presenter.entities.PresenterNoteEntity
 import com.example.notes.cleanArchitecture.presenter.noteEdit.NoteViewModel
 import com.example.notes.cleanArchitecture.view.editor.EditorView
+import com.example.notes.databinding.FragNoteEditBinding
+import com.example.notes.di.Injector
 import org.joda.time.DateTime
 import javax.inject.Inject
 
@@ -20,17 +20,17 @@ private const val ARG_HOLDER = "ARG_HOLDER"
 
 class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
     companion object {
-        fun newInstance(noteRecyclerHolder: NoteRecyclerHolder) = NoteEditView().apply {
+        fun newInstance(presenterNoteEntity: PresenterNoteEntity) = NoteEditView().apply {
             arguments = Bundle().apply {
-                putParcelable(ARG_HOLDER, noteRecyclerHolder)
+                putParcelable(ARG_HOLDER, presenterNoteEntity)
             }
         }
     }
 
     @Inject override lateinit var viewModel: NoteViewModel
 
-    private var holder: NoteRecyclerHolder? = null
-    private var noteID: Long = 0
+    private var entityPresenter: PresenterNoteEntity? = null
+    private var noteID: String = ""
     private var _binding: FragNoteEditBinding? = null
     private val binding get() = _binding!!
     private var oldKey = listOf<String>()
@@ -40,7 +40,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
         Injector.component.inject(this)
         super.onCreate(savedInstanceState)
         arguments?.let {
-            holder = it.getParcelable(ARG_HOLDER)
+            entityPresenter = it.getParcelable(ARG_HOLDER)
         }
     }
 
@@ -64,7 +64,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                         with(binding) {
                             if (etHeader.text.toString().isNotBlank()) {
                                 viewModel.onApplyClick(
-                                    NoteRecyclerHolder(
+                                    PresenterNoteEntity(
                                         id = noteID,
                                         header = etHeader.text.toString(),
                                         desc = etDesc.text.toString(),
@@ -95,7 +95,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                 }
             }
 
-            holder?.let {
+            entityPresenter?.let {
                 etHeader.setText(it.header)
                 etDesc.setText(it.desc)
                 etBody.setText(it.body)
