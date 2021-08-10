@@ -47,10 +47,6 @@ class SignInView: BaseView<SignInViewModel>(R.layout.frag_signin) {
             }
         }
 
-        viewModel.isBtnEnable.observe(viewLifecycleOwner) {
-            binding.btnSignin.isEnabled = it
-        }
-
         viewModel.hideKeyboard.observe(viewLifecycleOwner) {
             val imm = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(requireView().windowToken, 0)

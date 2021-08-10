@@ -14,13 +14,13 @@ import javax.inject.Inject
 
 class NoteDataSourceImpl @Inject constructor(
     private val authDataSource: AuthDataSource
-): NoteDataSource {
+) : NoteDataSource {
     private val database = Firebase.firestore
 
     override fun addNoteFB(noteEntity: NoteEntity): Completable {
         return Completable.create { emitter ->
             authDataSource.getUser()?.let { user ->
-                with(database.collection(user.uid)){
+                with(database.collection(user.uid)) {
                     add(noteEntity)
                         .addOnSuccessListener {
                             emitter.onComplete()
@@ -31,11 +31,26 @@ class NoteDataSourceImpl @Inject constructor(
                 }
             } ?: emitter.onError(UserAuthException())
         }
+    }
 
+    override fun setNoteFB(noteEntity: NoteEntity): Completable {
+        return Completable.create { emitter ->
+            authDataSource.getUser()?.let { user ->
+                with(database.collection(user.uid)) {
+                    document(noteEntity.id).set(noteEntity)
+                        .addOnSuccessListener {
+                            emitter.onComplete()
+                        }
+                        .addOnFailureListener {
+                            emitter.onError(it)
+                        }
+                }
+            } ?: emitter.onError(UserAuthException())
+        }
     }
 
     override fun setIsOnline(isOnline: Boolean): Completable {
-        return Completable.create {emitter ->
+        return Completable.create { emitter ->
             if (isOnline) {
                 database.enableNetwork()
             } else {
@@ -50,14 +65,14 @@ class NoteDataSourceImpl @Inject constructor(
 
     override fun deleteNoteFB(noteIDs: List<String>): Completable {
         return authDataSource.getUser()?.let { user ->
-                Completable.fromAction {
-                    with(database.collection(user.uid)) {
-                        noteIDs.forEach { id ->
-                            document(id).delete()
-                        }
+            Completable.fromAction {
+                with(database.collection(user.uid)) {
+                    noteIDs.forEach { id ->
+                        document(id).delete()
                     }
                 }
-            } ?: Completable.error(UserAuthException())
+            }
+        } ?: Completable.error(UserAuthException())
     }
 
     override fun getNotesFB(): Single<List<NoteEntity>> {

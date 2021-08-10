@@ -10,14 +10,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.notes.presenter.backCoordinator.OnBackCollector
 import com.example.notes.presenter.base.baseFragment.BaseViewModel
+import com.example.notes.presenter.coordinator.Coordinator
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class GalleryViewModel @Inject constructor(
-    private val onBackCollector: OnBackCollector
-) : BaseViewModel() {
+    private val onBackCollector: OnBackCollector,
+    private val coordinator: Coordinator,
+) : BaseViewModel(onBackCollector, coordinator) {
     private val _selectionMode = MutableLiveData<Boolean>()
     val selectionMode get() = _selectionMode as LiveData<Boolean>
 
@@ -82,7 +84,7 @@ class GalleryViewModel @Inject constructor(
         _showProgress.postValue(false)
     }
 
-    fun onBackClick() {
+    fun onExitClick() {
         when {
             isOpenImage -> {
                 isOpenImage = false
@@ -118,7 +120,7 @@ class GalleryViewModel @Inject constructor(
             if (field != value) {
                 if (value) {
                     onBackCollector.subscribe {
-                        onBackClick()
+                        onExitClick()
                     }
                     _selectionMode.postValue(false)
                 } else {

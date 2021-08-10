@@ -8,24 +8,35 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
 import com.example.notes.presenter.entities.PresenterNoteEntity
 import com.example.notes.databinding.ItemRecyclerNoteBinding
+import com.example.notes.presenter.entities.NoteRecyclerItems
 import javax.inject.Inject
+
 
 class NoteRecyclerAdapter @Inject constructor(
     private val context: Context
-): RecyclerView.Adapter<NoteRecyclerAdapter.NoteViewHolder>() {
-    inner class NoteViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        private const val PROGRESS_TYPE = 0
+        private const val NOTE_TYPE = 1
+    }
+
+    inner class ProgressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = ItemRecyclerNoteBinding.bind(itemView)
         private val res = context.resources
 
         var presenterNote: PresenterNoteEntity? = null
-            set (dataFormContainerList) {
+            set(dataFormContainerList) {
                 field = dataFormContainerList
                 field?.let {
                     with(binding) {
                         tvHeader.text = it.header
                         tvBody.text = it.desc
-                        tvCreationDate.text=itemView.resources.getString(R.string.created, it.creationDate)
-                        tvLastEditDate.text=itemView.resources.getString(R.string.edited, it.lastEditDate)
+                        tvCreationDate.text =
+                            itemView.resources.getString(R.string.created, it.creationDate)
+                        tvLastEditDate.text =
+                            itemView.resources.getString(R.string.edited, it.lastEditDate)
                     }
                 }
             }
@@ -40,13 +51,13 @@ class NoteRecyclerAdapter @Inject constructor(
                         tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
                         tvCreationDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
                         tvLastEditDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Selected))
-                        layout.setBackgroundResource(R.drawable.bg_item_recycler_selected)
+                        card.setCardBackgroundColor(res.getColor(R.color.bg_note_list_item_selected))
                     } else {
                         tvHeader.setTextColor(res.getColor(R.color.RecyclerItem_Header_Default))
                         tvBody.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
                         tvCreationDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
                         tvLastEditDate.setTextColor(res.getColor(R.color.RecyclerItem_Body_Default))
-                        layout.setBackgroundResource(R.drawable.bg_item_recycler)
+                        card.setCardBackgroundColor(res.getColor(R.color.bg_note_list_item_deselected))
                     }
                 }
             }
@@ -54,7 +65,7 @@ class NoteRecyclerAdapter @Inject constructor(
         init {
             isSelected = false
             with(binding) {
-                layout.setOnLongClickListener {
+                card.setOnLongClickListener {
                     presenterNote?.let {
                         if (isSelectedMode) {
                             isSelected = !isSelected
@@ -65,7 +76,7 @@ class NoteRecyclerAdapter @Inject constructor(
                     }
                     true
                 }
-                layout.setOnClickListener {
+                card.setOnClickListener {
                     if (isSelectedMode) {
                         isSelected = !isSelected
                     } else {
@@ -81,20 +92,52 @@ class NoteRecyclerAdapter @Inject constructor(
     var longTabListener: (() -> Unit)? = null
     var tabListener: ((PresenterNoteEntity) -> Unit)? = null
 
-    var notesList: List<PresenterNoteEntity>? = null
-        set (dataFormContainerList) {
+    var notesList: List<NoteRecyclerItems>? = null
+        set(dataFormContainerList) {
             field = dataFormContainerList
             notifyDataSetChanged()
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_recycler_note, parent, false)
-        return NoteViewHolder(view)
+
+    override fun getItemViewType(position: Int): Int {
+        return notesList?.let {
+            when (it[position]) {
+                is NoteRecyclerItems.ProgressItem -> PROGRESS_TYPE
+                is NoteRecyclerItems.NoteItem -> NOTE_TYPE
+            }
+        } ?: PROGRESS_TYPE
     }
 
-    override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        notesList?.let {
-            holder.presenterNote = it[position]
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            NOTE_TYPE -> {
+                NoteViewHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_recycler_note, parent, false)
+                )
+            }
+            PROGRESS_TYPE -> {
+                ProgressViewHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_circle_progress, parent, false)
+                )
+            }
+            else -> {
+                ProgressViewHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_circle_progress, parent, false)
+                )
+            }
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder.itemViewType) {
+            NOTE_TYPE -> {
+                notesList?.let {
+                    (holder as NoteViewHolder).presenterNote = (it[position] as NoteRecyclerItems.NoteItem).data
+                }
+            }
         }
     }
 

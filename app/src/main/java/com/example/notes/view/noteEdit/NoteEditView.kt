@@ -62,11 +62,11 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                 when(item.itemId) {
                     R.id.action_apply_note -> {
                         with(binding) {
-                            if (etHeader.text.toString().isNotBlank()) {
+                            if (etHeader?.text.toString().isNotBlank()) {
                                 viewModel.onApplyClick(
                                     PresenterNoteEntity(
                                         id = noteID,
-                                        header = etHeader.text.toString(),
+                                        header = etHeader?.text.toString(),
                                         desc = etDesc.text.toString(),
                                         body = etBody.text.toString(),
                                         image = oldKey,
@@ -83,8 +83,8 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
                                     )
                                 )
                             } else {
-                                activity?.let {
-                                    etHeader.setBackgroundColor(it.applicationContext.resources.getColor(R.color.errorRed))
+                                requireActivity().let {
+                                    etHeader?.setBackgroundColor(it.applicationContext.resources.getColor(R.color.errorRed))
                                 }
                             }
                         }
@@ -96,7 +96,7 @@ class NoteEditView: BaseView<NoteViewModel>(R.layout.frag_note_edit) {
             }
 
             entityPresenter?.let {
-                etHeader.setText(it.header)
+                etHeader?.setText(it.header)
                 etDesc.setText(it.desc)
                 etBody.setText(it.body)
                 noteID = it.id

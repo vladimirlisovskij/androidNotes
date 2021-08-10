@@ -7,6 +7,7 @@ import com.example.notes.domain.useCases.RegisterUseCase
 import com.example.notes.presenter.backCoordinator.OnBackCollector
 import com.example.notes.presenter.coordinator.Coordinator
 import com.example.notes.presenter.entities.UserLoginHolder
+import com.example.notes.presenter.progressbarManager.ProgressbarManager
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -19,28 +20,14 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val coordinator: Coordinator,
     private val backCollector: OnBackCollector,
-    private val registerUseCase: RegisterUseCase
-): BaseViewModel() {
+    private val registerUseCase: RegisterUseCase,
+    private val progressbarManager: ProgressbarManager
+): BaseViewModel(backCollector, coordinator) {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage get() = _errorMessage as LiveData<String?>
 
-    private val _isBtnEnable = MutableLiveData<Boolean>()
-    val isBtnEnable get() = _isBtnEnable as LiveData<Boolean>
-
     private val _hideKeyboard = MutableLiveData<Unit>()
     val hideKeyboard get() = _hideKeyboard as LiveData<Unit>
-
-    override fun onCreate() {
-        super.onCreate()
-        backCollector.subscribe {
-            coordinator.back()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        backCollector.disposeLastSubscription()
-    }
 
     fun onSingIn(userLoginHolder: UserLoginHolder) {
         when {
@@ -51,13 +38,13 @@ class SignInViewModel @Inject constructor(
                 _errorMessage.postValue("Password to short")
             }
             else -> {
-                _isBtnEnable.postValue(false)
+                progressbarManager.show()
                 _hideKeyboard.postValue(Unit)
                 registerUseCase(userLoginHolder.email, userLoginHolder.password)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .doFinally {
-                        _isBtnEnable.postValue(true)
+                        progressbarManager.dismiss()
                     }
                     .subscribe(
                         {

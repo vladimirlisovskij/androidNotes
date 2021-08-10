@@ -11,26 +11,18 @@ import javax.inject.Inject
 class EditorViewModel @Inject constructor(
     private val coordinator: Coordinator,
     private val onBackCollector: OnBackCollector
-)   : ResultViewModel() {
+) : ResultViewModel(onBackCollector, coordinator) {
     private var isGalleryOpen = false
 
     private val _closeGallery = MutableLiveData<Unit>()
     val closeGallery get() = _closeGallery as LiveData<Unit>
 
-    override fun onCreate() {
-        super.onCreate()
-        onBackCollector.subscribe {
-            if (isGalleryOpen) {
-                _closeGallery.postValue(Unit)
-            } else {
-                coordinator.back()
-            }
+    override fun onBackClick() {
+        if (isGalleryOpen) {
+            _closeGallery.postValue(Unit)
+        } else {
+            super.onBackClick()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        onBackCollector.disposeLastSubscription()
     }
 
     fun onEditorBack() {

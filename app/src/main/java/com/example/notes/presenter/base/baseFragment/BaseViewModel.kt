@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.notes.presenter.backCoordinator.OnBackCollector
+import com.example.notes.presenter.coordinator.Coordinator
+import com.example.notes.presenter.progressbarManager.ProgressbarManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -12,7 +15,10 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-abstract class BaseViewModel: ViewModel() {
+abstract class BaseViewModel(
+    private val backCollector: OnBackCollector,
+    private val coordinator: Coordinator,
+) : ViewModel() {
     private val mutableToastMessage = MutableLiveData<String>()
     val toastMessage: LiveData<String> = mutableToastMessage
 
@@ -44,7 +50,10 @@ abstract class BaseViewModel: ViewModel() {
             .addToComposite()
     }
 
-    protected fun <T> Single<T>.simpleSingleSubscribe(onSuccess: Consumer<T>, onError: Consumer<Throwable>) {
+    protected fun <T> Single<T>.simpleSingleSubscribe(
+        onSuccess: Consumer<T>,
+        onError: Consumer<Throwable>
+    ) {
         this.observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .doOnError {
@@ -56,25 +65,35 @@ abstract class BaseViewModel: ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
-    open fun onCreate() { }
+    open fun onBackClick() {
+        coordinator.back()
+    }
 
-    open fun onCreateView() { }
+    open fun onCreate() {}
 
-    open fun onViewCreated() { }
+    open fun onCreateView() {}
 
-    open fun onViewStateRestored() { }
+    open fun onViewCreated() {}
 
-    open fun onStart() { }
+    open fun onViewStateRestored() {}
 
-    open fun onResume() { }
+    open fun onStart() {}
 
-    open fun onPause() { }
+    open fun onResume() {
+        backCollector.subscribe {
+            coordinator.back()
+        }
+    }
 
-    open fun onStop() { }
+    open fun onPause() {
+        backCollector.disposeLastSubscription()
+    }
 
-    open fun onSaveInstanceState() { }
+    open fun onStop() {}
 
-    open fun onDestroyView() { }
+    open fun onSaveInstanceState() {}
+
+    open fun onDestroyView() {}
 
     open fun onDestroy() {
         compositeDisposable.dispose()

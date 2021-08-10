@@ -2,11 +2,13 @@ package com.example.notes.presenter.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.notes.domain.useCases.GetUserUseCase
 import com.example.notes.domain.useCases.LoginUseCase
 import com.example.notes.presenter.backCoordinator.OnBackCollector
 import com.example.notes.presenter.base.baseFragment.BaseViewModel
 import com.example.notes.presenter.coordinator.Coordinator
 import com.example.notes.presenter.entities.UserLoginHolder
+import com.example.notes.presenter.progressbarManager.ProgressbarManager
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -20,32 +22,21 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val coordinator: Coordinator,
     private val backCollector: OnBackCollector,
-    private val loginUseCase: LoginUseCase
-) : BaseViewModel() {
+    private val loginUseCase: LoginUseCase,
+    private val getUserUseCase: GetUserUseCase,
+    private val progressbarManager: ProgressbarManager
+) : BaseViewModel(backCollector, coordinator) {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage get() = _errorMessage as LiveData<String?>
-
-    private val _isBtnEnable = MutableLiveData<Boolean>()
-    val isBtnEnable get() = _isBtnEnable as LiveData<Boolean>
 
     private val _hideKeyboard = MutableLiveData<Unit>()
     val hideKeyboard get() = _hideKeyboard as LiveData<Unit>
 
-    private val auth = Firebase.auth
-
     override fun onCreate() {
         super.onCreate()
-        backCollector.subscribe {
-            coordinator.back()
-        }
-        if (auth.currentUser != null) {
+        if (getUserUseCase()!= null) {
             coordinator.openListNote()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        backCollector.disposeLastSubscription()
     }
 
     fun onLogIn(userLoginHolder: UserLoginHolder) {
@@ -57,13 +48,13 @@ class LoginViewModel @Inject constructor(
                 _errorMessage.postValue("Password to short")
             }
             else -> {
-                _isBtnEnable.postValue(false)
+                progressbarManager.show()
                 _hideKeyboard.postValue(Unit)
                 loginUseCase(userLoginHolder.email, userLoginHolder.password)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .doFinally {
-                        _isBtnEnable.postValue(true)
+                        progressbarManager.dismiss()
                     }
                     .subscribe(
                         {

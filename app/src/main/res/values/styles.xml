@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="RecyclerItem.Selected" parent="Widget.AppCompat.Button">
+        <item name="android:textAppearance">@style/RecyclerItem.Selected</item>
+        <item name="android:background">@drawable/bg_item_recycler_selected</item>
+    </style>
+
+    <style name="RecyclerItem.Default" parent="Widget.AppCompat.Button">
+        <item name="android:textAppearance">@style/RecyclerItem.Default</item>
+        <item name="android:background">@drawable/bg_item_recycler</item>
+    </style>
+
+    <style name="Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ActionMode" parent="Widget.AppCompat.ActionMode">
+        <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
+        <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
+        <item name="background">@color/material_grey_900</item>
+    </style>
+</resources>

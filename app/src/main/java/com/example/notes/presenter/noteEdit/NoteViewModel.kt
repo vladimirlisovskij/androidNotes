@@ -2,11 +2,16 @@ package com.example.notes.presenter.noteEdit
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.notes.presenter.backCoordinator.OnBackCollector
 import com.example.notes.presenter.base.baseFragment.BaseViewModel
+import com.example.notes.presenter.coordinator.Coordinator
 import com.example.notes.presenter.entities.PresenterNoteEntity
 import javax.inject.Inject
 
-class NoteViewModel @Inject constructor(): BaseViewModel()  {
+class NoteViewModel @Inject constructor(
+    private val coordinator: Coordinator,
+    private val onBackCollector: OnBackCollector
+): BaseViewModel(onBackCollector, coordinator)  {
     private val _hideKeyboard = MutableLiveData<Unit>()
     val hideKeyboard get() = _hideKeyboard as LiveData<Unit>
 

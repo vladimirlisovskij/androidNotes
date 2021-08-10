@@ -7,6 +7,8 @@ import io.reactivex.rxjava3.core.Single
 interface NoteDataSource {
     fun addNoteFB(noteEntity: NoteEntity): Completable
 
+    fun setNoteFB(noteEntity: NoteEntity): Completable
+
     fun deleteNoteFB(noteIDs: List<String>): Completable
 
     fun getNotesFB(): Single<List<NoteEntity>>

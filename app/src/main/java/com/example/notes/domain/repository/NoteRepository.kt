@@ -10,6 +10,8 @@ class NoteRepository @Inject constructor(
 ) {
     fun addNoteFB(noteEntity: NoteEntity): Completable = dataSource.addNoteFB(noteEntity)
 
+    fun setNoteFB(noteEntity: NoteEntity): Completable = dataSource.setNoteFB(noteEntity)
+
     fun getNotesFB() = dataSource.getNotesFB()
 
     fun deleteNoteFB(id: List<String>): Completable = dataSource.deleteNoteFB(id)

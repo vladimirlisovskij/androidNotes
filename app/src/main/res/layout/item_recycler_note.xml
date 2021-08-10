@@ -2,64 +2,69 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    style="@style/RecyclerItem.Default"
-    >
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvHeader"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Заголовок"
-        android:textColor="@color/RecyclerItem.Header.Default"/>
-
-    <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:textColor="@color/RecyclerItem.Body.Default"
+        app:cardBackgroundColor="@color/purple_200"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tvHeader"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHeader"
-        app:layout_constraintVertical_bias="1.0"
-        tools:text="Краткое описание" />
-
-    <TextView
-        android:id="@+id/tvCreationDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        tools:text="Создано 11.06.20"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/RecyclerItem.Header.Default"/>
+        app:rippleColor="@color/black"
+        android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/tvLastEditDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        tools:text="Изменено 11.06.20"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCreationDate"
-        android:textColor="@color/RecyclerItem.Header.Default"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/RecyclerItem.Header.Default"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Заголовок" />
+
+            <TextView
+                android:id="@+id/tvBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/RecyclerItem.Body.Default"
+                tools:text="Краткое описание" />
+
+            <TextView
+                android:id="@+id/tvCreationDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:textSize="12sp"
+                android:textColor="@color/RecyclerItem.Header.Default"
+                tools:text="Создано 11.06.20" />
+
+            <TextView
+                android:id="@+id/tvLastEditDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                android:textSize="12sp"
+                android:textColor="@color/RecyclerItem.Header.Default"
+                tools:text="Изменено 11.06.20" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,13 +3,11 @@ package com.example.notes.presenter.recycler
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.notes.domain.useCases.*
 import com.example.notes.presenter.backCoordinator.OnBackCollector
 import com.example.notes.presenter.base.baseFragment.BaseViewModel
 import com.example.notes.presenter.coordinator.Coordinator
-import com.example.notes.domain.useCases.AddNoteUseCase
-import com.example.notes.domain.useCases.DelNoteUseCase
-import com.example.notes.domain.useCases.GetNotesUseCase
-import com.example.notes.domain.useCases.SetIsOnlineUseCase
+import com.example.notes.presenter.entities.NoteRecyclerItems
 import com.example.notes.presenter.entities.PresenterNoteEntity
 import com.example.notes.presenter.entities.toDomain
 import com.example.notes.presenter.entities.toPresentation
@@ -21,35 +19,36 @@ import javax.inject.Inject
 
 class RecyclerViewModel @Inject constructor(
     private val addNoteUseCase: AddNoteUseCase,
+    private val setNoteUseCase: SetNoteUseCase,
     private val getNotesUseCase: GetNotesUseCase,
     private val delNoteUseCase: DelNoteUseCase,
     private val setIsOnlineUseCase: SetIsOnlineUseCase,
     private val coordinator: Coordinator,
     private val onBackCollector: OnBackCollector
-): BaseViewModel()  {
+) : BaseViewModel(onBackCollector, coordinator) {
     private var isSelected = false
 
-    private val mutableNoteList = MutableLiveData<List<PresenterNoteEntity>>()
-    val presenterNoteList: LiveData<List<PresenterNoteEntity>> = mutableNoteList
+    private val mutableNoteList = MutableLiveData<List<NoteRecyclerItems>>()
+    val presenterNoteList: LiveData<List<NoteRecyclerItems>> = mutableNoteList
 
     private val mutableSelectedMode = MutableLiveData<Boolean>()
     val selectedMode: LiveData<Boolean> = mutableSelectedMode
 
-    override fun onCreate() {
-        super.onCreate()
+    private val _enableRefreshing = MutableLiveData<Boolean>()
+    val enableRefreshing: LiveData<Boolean> get() = _enableRefreshing
+
+    override fun onResume() {
+        super.onResume()
         onBackCollector.subscribe {
             if (isSelected) onNavigationBack()
             else coordinator.back()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        onBackCollector.disposeLastSubscription()
-    }
-
-    override fun onResume() {
         getNotes()
+    }
+
+    override fun onBackClick() {
+        if (isSelected) onNavigationBack()
+        else super.onBackClick()
     }
 
     fun setIsOnline(isOnline: Boolean) {
@@ -62,15 +61,15 @@ class RecyclerViewModel @Inject constructor(
     fun onAddNoteClick() {
         coordinator.startNoteEdit(
             PresenterNoteEntity(
-                id="",
-                header="",
-                desc="",
-                body="",
-                image= listOf(),
-                creationDate="",
-                lastEditDate=""
+                id = "",
+                header = "",
+                desc = "",
+                body = "",
+                image = listOf(),
+                creationDate = "",
+                lastEditDate = ""
             )
-        ).simpleObservableSubscribe{
+        ).simpleObservableSubscribe {
             (it as? PresenterNoteEntity)?.let { note ->
                 coordinator.back()
                 addNoteUseCase(note.toDomain())
@@ -84,16 +83,16 @@ class RecyclerViewModel @Inject constructor(
 
     fun onItemClick(presenterNoteEntity: PresenterNoteEntity) {
         coordinator.startNoteEdit(presenterNoteEntity)
-            .simpleObservableSubscribe{
-            (it as? PresenterNoteEntity)?.let { note ->
-                coordinator.back()
-                addNoteUseCase(note.toDomain())
-                    .toSingle { }
-                    .simpleSingleSubscribe {
-                        getNotes()
-                    }
+            .simpleObservableSubscribe {
+                (it as? PresenterNoteEntity)?.let { note ->
+                    coordinator.back()
+                    setNoteUseCase(note.toDomain())
+                        .toSingle { }
+                        .simpleSingleSubscribe {
+                            getNotes()
+                        }
+                }
             }
-        }
     }
 
     fun onLongTab() {
@@ -107,14 +106,16 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun onDeleteClick(listPresenterNotes: List<PresenterNoteEntity>) {
+        mutableNoteList.postValue(listOf(NoteRecyclerItems.ProgressItem()))
         isSelected = false
         mutableSelectedMode.postValue(false)
-        delNoteUseCase(listPresenterNotes.map { it.id }).andThen(getNotesUseCase()).simpleSingleSubscribe { notes ->
-            Log.d("tag", "getNotes OK")
-            mutableNoteList.postValue(notes.map {
-                it.toPresentation()
-            })
-        }
+        delNoteUseCase(listPresenterNotes.map { it.id }).andThen(getNotesUseCase())
+            .simpleSingleSubscribe { notes ->
+                Log.d("tag", "getNotes OK")
+                mutableNoteList.postValue(notes.map {
+                    NoteRecyclerItems.NoteItem(it.toPresentation())
+                })
+            }
     }
 
     fun onSignOut() {
@@ -123,10 +124,13 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun getNotes() {
+        _enableRefreshing.postValue(true)
+        mutableNoteList.postValue(listOf(NoteRecyclerItems.ProgressItem()))
         getNotesUseCase().simpleSingleSubscribe { notes ->
             Log.d("tag", "getNotes OK")
+            _enableRefreshing.postValue(false)
             mutableNoteList.postValue(notes.map {
-                it.toPresentation()
+                NoteRecyclerItems.NoteItem(it.toPresentation())
             })
         }
     }

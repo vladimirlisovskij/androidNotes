@@ -14,17 +14,4 @@
         android:orderInCategory="1"
         android:title="add notePresenter"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_del_notes"
-        android:icon="@drawable/ic_trash_can"
-        android:orderInCategory="2"
-        android:title="add notePresenter"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_select_all"
-        android:orderInCategory="3"
-        android:title="select all"
-        app:showAsAction="ifRoom|withText" />
 </menu>

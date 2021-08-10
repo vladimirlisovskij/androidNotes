@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/bg_item_recycler.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/bg_item_recycler_selected.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_add.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_back.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_back_white.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_check.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_logout.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_minus.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_photo_camera.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_trash_can.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/drawable/ic_up_arrow.xml" value="0.3828125" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/layout/activity_main.xml" value="0.28177083333333336" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/layout/frag_login.xml" value="0.1" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/layout/frag_note_edit.xml" value="0.21951219512195122" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/layout/frag_recycler.xml" value="0.10185185185185185" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/layout/frag_signin.xml" value="0.1" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/layout/item_circle_progress.xml" value="0.33" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/layout/item_recycler_note.xml" value="0.3151862464183381" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/menu/contextual_action_bar_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/menu/menu_editor.xml" value="0.10185185185185185" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/androidNotes/app/src/main/res/menu/menu_recycler.xml" value="0.10185185185185185" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

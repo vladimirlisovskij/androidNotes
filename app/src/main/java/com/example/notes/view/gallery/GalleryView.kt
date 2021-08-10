@@ -60,7 +60,7 @@ class GalleryView
             toolbarGallery.inflateMenu(R.menu.menu_gallery)
             toolbarGallery.setNavigationIcon(R.drawable.ic_back)
             toolbarGallery.setNavigationOnClickListener {
-                viewModel.onBackClick()
+                viewModel.onExitClick()
             }
             menu = toolbarGallery.menu
             menu.findItem(R.id.action_delete_image).isVisible = false
@@ -90,7 +90,7 @@ class GalleryView
                     }
 
                     android.R.id.home -> {
-                        viewModel.onBackClick()
+                        viewModel.onExitClick()
                         true
                     }
 

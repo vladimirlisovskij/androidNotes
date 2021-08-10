@@ -1,6 +1,7 @@
 package com.example.notes.view.login
 
 import android.app.Activity
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,12 @@ import com.example.notes.presenter.entities.UserLoginHolder
 import com.example.notes.presenter.login.LoginViewModel
 import com.example.notes.databinding.FragLoginBinding
 import com.example.notes.di.Injector
+import com.example.notes.view.mainActivity.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
-class LoginView: BaseView<LoginViewModel>(R.layout.frag_login) {
+class LoginView : BaseView<LoginViewModel>(R.layout.frag_login) {
     companion object {
         fun newInstance() = LoginView()
     }
@@ -26,8 +28,6 @@ class LoginView: BaseView<LoginViewModel>(R.layout.frag_login) {
 
     private var _binding: FragLoginBinding? = null
     private val binding get() = _binding!!
-
-    private val auth = Firebase.auth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Injector.component?.inject(this)
@@ -51,24 +51,21 @@ class LoginView: BaseView<LoginViewModel>(R.layout.frag_login) {
             }
         }
 
-        viewModel.isBtnEnable.observe(viewLifecycleOwner) { isEnable ->
-            with(binding) {
-                btnSignin.isEnabled = isEnable
-                btnLogin.isEnabled = isEnable
-            }
-        }
 
         viewModel.hideKeyboard.observe(viewLifecycleOwner) {
-            val imm = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm =
+                requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(requireView().windowToken, 0)
         }
 
         with(binding) {
             btnLogin.setOnClickListener {
-                viewModel.onLogIn(UserLoginHolder(
-                    email = etEmail.text.toString(),
-                    password = etPassword.text.toString()
-                ))
+                viewModel.onLogIn(
+                    UserLoginHolder(
+                        email = etEmail.text.toString(),
+                        password = etPassword.text.toString()
+                    )
+                )
             }
 
             btnSignin.setOnClickListener {

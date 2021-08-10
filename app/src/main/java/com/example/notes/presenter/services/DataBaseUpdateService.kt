@@ -8,7 +8,7 @@ import java.util.*
 class DataBaseUpdateService: Service() {
     companion object {
         const val FILTER_KEY = "com.example.notes.classes.services.DataBaseUpdateService.FILTER_KEY"
-        const val UPDATE_PERIOD = 10000L // 5m=300000L
+        const val UPDATE_PERIOD = 300000L // 5m=300000L
     }
 
     private val timer = Timer()

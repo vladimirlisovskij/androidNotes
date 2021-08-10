@@ -16,4 +16,17 @@
         app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
+
+    <View
+        android:id="@+id/progress_circular"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#BA5252"
+        android:layout="@layout/item_circle_progress"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
