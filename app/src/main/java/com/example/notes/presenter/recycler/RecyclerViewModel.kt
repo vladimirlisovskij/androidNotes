@@ -106,7 +106,7 @@ class RecyclerViewModel @Inject constructor(
     }
 
     fun onDeleteClick(listPresenterNotes: List<PresenterNoteEntity>) {
-        mutableNoteList.postValue(listOf(NoteRecyclerItems.ProgressItem()))
+        mutableNoteList.postValue(listOf(NoteRecyclerItems.ProgressItem))
         isSelected = false
         mutableSelectedMode.postValue(false)
         delNoteUseCase(listPresenterNotes.map { it.id }).andThen(getNotesUseCase())
@@ -125,7 +125,7 @@ class RecyclerViewModel @Inject constructor(
 
     fun getNotes() {
         _enableRefreshing.postValue(true)
-        mutableNoteList.postValue(listOf(NoteRecyclerItems.ProgressItem()))
+        mutableNoteList.postValue(listOf(NoteRecyclerItems.ProgressItem))
         getNotesUseCase().simpleSingleSubscribe { notes ->
             Log.d("tag", "getNotes OK")
             _enableRefreshing.postValue(false)

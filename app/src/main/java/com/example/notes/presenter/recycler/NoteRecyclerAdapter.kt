@@ -6,23 +6,34 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
-import com.example.notes.presenter.entities.PresenterNoteEntity
 import com.example.notes.databinding.ItemRecyclerNoteBinding
 import com.example.notes.presenter.entities.NoteRecyclerItems
+import com.example.notes.presenter.entities.PresenterNoteEntity
+import com.example.notes.presenter.recycler.NoteRecyclerAdapter.BaseViewHolder
 import javax.inject.Inject
 
 
 class NoteRecyclerAdapter @Inject constructor(
     private val context: Context
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    ) : RecyclerView.Adapter<BaseViewHolder<*>>() {
     companion object {
         private const val PROGRESS_TYPE = 0
         private const val NOTE_TYPE = 1
     }
 
-    inner class ProgressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    abstract inner class BaseViewHolder<T>(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
+        abstract fun bind(item: T)
+    }
 
-    inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ProgressViewHolder(itemView: View) :
+        BaseViewHolder<NoteRecyclerItems.ProgressItem>(itemView) {
+        override fun bind(item: NoteRecyclerItems.ProgressItem) {}
+    }
+
+    inner class NoteViewHolder(itemView: View) :
+        BaseViewHolder<NoteRecyclerItems.NoteItem>(itemView) {
         private val binding = ItemRecyclerNoteBinding.bind(itemView)
         private val res = context.resources
 
@@ -85,6 +96,10 @@ class NoteRecyclerAdapter @Inject constructor(
                 }
             }
         }
+
+        override fun bind(item: NoteRecyclerItems.NoteItem) {
+            presenterNote = item.data
+        }
     }
 
     var isSelectedMode = false
@@ -108,7 +123,10 @@ class NoteRecyclerAdapter @Inject constructor(
         } ?: PROGRESS_TYPE
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): NoteRecyclerAdapter.BaseViewHolder<*> {
         return when (viewType) {
             NOTE_TYPE -> {
                 NoteViewHolder(
@@ -131,14 +149,18 @@ class NoteRecyclerAdapter @Inject constructor(
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder.itemViewType) {
-            NOTE_TYPE -> {
-                notesList?.let {
-                    (holder as NoteViewHolder).presenterNote = (it[position] as NoteRecyclerItems.NoteItem).data
+    override fun onBindViewHolder(holder: NoteRecyclerAdapter.BaseViewHolder<*>, position: Int) {
+        notesList?.let {
+            when (holder) {
+                is ProgressViewHolder -> {
+                    holder.bind(it[position] as NoteRecyclerItems.ProgressItem)
+                }
+                is NoteViewHolder -> {
+                    holder.bind(it[position] as NoteRecyclerItems.NoteItem)
                 }
             }
         }
+
     }
 
     override fun getItemCount(): Int = notesList?.size ?: 0
